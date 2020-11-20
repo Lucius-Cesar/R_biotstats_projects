@@ -1,0 +1,7 @@
+"0","```r
+#les test d'hypothÃ¨se permettant de comparer une variable quantitative par rapport Ã  une variable qualitative Ã  plus de 2 niveaux est l'ANOVA ou bine la version non paramÃ©trique
+# Parmi les conditions d'utilisation de ce test d'hypothÃ¨se, il faut que les rÃ©sidus respectent une distribution normal 
+iris %>% mutate(Petal.Length.res = Petal.Length - ave(Petal.Length, Species)) -> iris
+library(car)
+qqPlot(iris$Petal.Length.res, distribution = \"norm\", envelope = 0.95, col = \"Black\", ylab = \"RÃ©sidus des longueurs des pÃ©tales\", xlab = \"Quantiles de la distribution normale\")
+```"

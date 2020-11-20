@@ -1,0 +1,11 @@
+"0","```r
+## Recoding biom$type_alimentaire
+biom$type_alimentaire[biom$type_alimentaire == \"omnivore\"] <- \"omni\"
+biom$type_alimentaire[biom$type_alimentaire == \"vege\"] <- \"veget\"
+biom$type_alimentaire[biom$type_alimentaire == \"omn\"] <- \"omni\"
+biom$type_alimentaire <- factor(biom$type_alimentaire, levels = c (\"omni\",\"veget\",\"vegan\"))
+type_alimentaire_bar <- qplot(x = as.factor(type_alimentaire),
+  data = biom, geom = \"bar\") + scale_x_discrete( drop = FALSE ) + coord_flip()
+## <other operations here...>
+plot(type_alimentaire_bar)
+```"

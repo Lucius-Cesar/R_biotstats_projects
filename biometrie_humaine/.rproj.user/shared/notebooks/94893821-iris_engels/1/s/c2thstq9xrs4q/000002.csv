@@ -1,0 +1,11 @@
+"0","```r
+# Je charge le package dplyr
+library(dplyr)
+# Je souhaite faire un nouveau tableau rÃ©sumant mes donnÃ©es en tenant compte des trois espÃ¨ces, pour ce faire je groupe par espÃ¨ce.
+iris%>%group_by(Species)%>% summarise(\"mean\" = mean(Petal.Length), \"sd\" = sd(Petal.Length), \"number\" = length(Petal.Length)) -> a
+## La maniÃ¨re d'Ã©crire ce code est expliquÃ© en dÃ©tails dans le livre R for Data science :  http://r4ds.had.co.nz/
+## DÃ©composons cependant le code, notre jeu de donnÃ©es iris va Ãªtre groupÃ© par les especes (Species), dont on veut un rÃ©sumÃ© ( summarise) avec la moyenne (mean), l'Ã©cart-type(sd) et le nombre d'observations (length). On assigne ce tableau de donnÃ©es Ã  la lettre a 
+library(knitr)
+# La tableau de base ne me convenait pas, les titres de mes colonnes Ã©taient en anglais, mon tableau n'avait pas de titre, ... je fais appel Ã  l'aide ?kable()
+kable(x = a, format = \"pandoc\", caption = \"Tableau des longueurs moyennes (en mm) des pÃ©tals de trois espÃ¨ces d'*Iris* : _I. setosa_, _I. versicolor_, _I. verginica_\", col.names = c(\"Especes\", \"Longeur moyenne\", \"Ecart-type\", \"Nombre d'observations\"), align = \"c\")
+```"

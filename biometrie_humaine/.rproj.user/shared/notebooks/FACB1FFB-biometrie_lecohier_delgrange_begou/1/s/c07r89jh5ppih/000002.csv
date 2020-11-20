@@ -1,0 +1,10 @@
+"0","```r
+library(readxl)
+biometrie_3 <- read_excel(\"../data/biometrie_10.xlsx\", 
+    skip = 26)
+View(biometrie_3)
+library(readxl)
+biometrie_4 <- read_excel(\"../data/biometrie_10.xlsx\", 
+    skip = 26)
+View(biometrie_4)
+```"

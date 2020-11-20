@@ -1,0 +1,5 @@
+"0","```r
+library(magrittr)
+library(dplyr)
+head (oursins, n= 440)
+```"

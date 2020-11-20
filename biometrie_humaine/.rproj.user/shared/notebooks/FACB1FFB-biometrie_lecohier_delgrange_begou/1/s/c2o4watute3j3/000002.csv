@@ -1,0 +1,6 @@
+"0","```r
+habitat_bar <- qplot(x = factor(habitat),
+  data = biom, geom = \"bar\") + coord_flip()
+## <other operations here...>
+plot(habitat_bar)
+```"

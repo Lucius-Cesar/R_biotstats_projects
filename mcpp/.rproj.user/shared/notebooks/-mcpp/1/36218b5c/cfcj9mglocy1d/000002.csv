@@ -1,0 +1,1 @@
+"0","mcpp %>% mutate(Weight.res = Weight - ave(Weight, Treat)) -> mcpp"

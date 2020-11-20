@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512685068689.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "87270045",
+    "id" : "C0BC29BA",
+    "lastKnownWriteTime" : 1512411184,
+    "last_content_update" : 1512411184,
+    "path" : "~/Documents/Projects/oursins/rapports/oursins_luciendelgrange.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "inline"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

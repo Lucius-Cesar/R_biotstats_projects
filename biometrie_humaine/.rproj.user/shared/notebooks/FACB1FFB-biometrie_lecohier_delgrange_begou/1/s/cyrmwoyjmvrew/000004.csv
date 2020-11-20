@@ -1,0 +1,36 @@
+"0","```r
+labs (x= \"age\", y=\"masse\",caption= \"masse en fonction de l'age\")
+```"
+"1","$x
+[1] \"age\"
+
+$y
+[1] \"masse\"
+
+$caption
+[1] \"masse en fonction de l'age\"
+
+attr(,\"class\")
+[1] \"labels\"
+"
+"0","```r
+theme ( plot.caption = element_text(hjust = 0.5, size=10))
+```"
+"1","List of 1
+ $ plot.caption:List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : num 10
+  ..$ hjust        : num 0.5
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi FALSE
+  ..- attr(*, \"class\")= chr [1:2] \"element_text\" \"element\"
+ - attr(*, \"class\")= chr [1:2] \"theme\" \"gg\"
+ - attr(*, \"complete\")= logi FALSE
+ - attr(*, \"validate\")= logi TRUE
+"

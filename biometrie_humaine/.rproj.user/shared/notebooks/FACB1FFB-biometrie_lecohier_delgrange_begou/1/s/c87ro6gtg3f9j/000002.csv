@@ -1,0 +1,6 @@
+"0","```r
+masse_taille_bar <- qplot(x = taille, y = masse, color =sexe,
+  data = biom, geom = \"point\")
+## <other operations here...>
+plot(masse_taille_bar)
+```"

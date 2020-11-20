@@ -1,0 +1,9 @@
+"0","```r
+#plot(lm., which = 1)
+lm. %>% qplot(.fitted, .resid, data = .) +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  xlab(\"Fitted values\") +
+  ylab(\"Residuals\") +
+  ggtitle(\"Residuals vs Fitted\")
+```"

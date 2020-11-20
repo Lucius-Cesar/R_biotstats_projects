@@ -1,0 +1,4 @@
+"0","```r
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(maturite),y=gonades, fill=origine))
+```"

@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1509371526743.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "1D519907",
+    "lastKnownWriteTime" : 6640666639647899654,
+    "last_content_update" : 1509371526743,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "2F27EC11",
+        "caption" : "biom18",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=biom18&cache_key=2F27EC11",
+        "displayedObservations" : "140",
+        "environment" : "",
+        "object" : "biom18",
+        "preview" : "0",
+        "totalObservations" : "140",
+        "variables" : "24"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

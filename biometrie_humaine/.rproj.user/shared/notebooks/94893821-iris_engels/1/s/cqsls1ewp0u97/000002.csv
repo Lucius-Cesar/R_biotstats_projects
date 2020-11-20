@@ -1,0 +1,22 @@
+"0","```r
+# Je charge mon jeu de donnÃ©es prÃ©sent dans le dossier data, il s'agit du jeu de donnÃ©es IRIS que tous les utilisateurs de R ont eu l'occasion d'utiliser. Ce dernier a Ã©tÃ© sauvegardÃ© en fichier CSV.
+library(readr)
+iris <- read_csv(\"../data/iris.csv\", 
+    col_types = cols(X1 = col_skip()))
+```"
+"1","Missing column names filled in: 'X1' [1]
+"
+"0","```r
+#Je visualise les donnÃ©es avec la fonction head
+#head(iris, n = 5)
+# Je vÃ©rifie dans l'environnement global que mes donnÃ©es sont importÃ©es dans le format souhaitÃ© :  Sepal.Length, Sepal.Width, Petal.Length, Petal.Width sont exprimÃ©s en variables numÃ©riques et Species est exprimÃ© en variable caractÃ¨res.
+#je modifie les donnÃ©es pour obtenir une variables facteurs avec les addins
+## Recoding iris$Species
+iris$Species <- as.character(iris$Species)
+iris$Species <- factor(iris$Species)
+#facteur Ã  3 niveaux. Je sais d plus qu'il y a 150 observations et 5 variables
+# la fonction levels me permet de prendre connaissance des niveaux facilement : 
+#levels(iris$Species)
+## nous avons donc : \"setosa\"     \"versicolor\" \"virginica\" 
+# aprÃ¨s avoir pris connaissance des donnÃ©es, on utilse la diÃ¨se pour ne plus effectuer les instructions de dÃ©couvertes
+```"

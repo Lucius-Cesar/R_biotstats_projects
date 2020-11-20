@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"R Notebook\"\noutput: html_notebook\n---\n\n\n```{r}\nlibrary(readr)\nCoupefaim <- read_delim(\"data/Coupefaim.csv\", \n    \"\\t\", escape_double = FALSE, trim_ws = TRUE)\nView(Coupefaim)\n```\n\n```{r}\n## Recoding Coupefaim$Treat\nCoupefaim$Treat <- factor(Coupefaim$Treat)\n\n```\n\n```{r}\nlibrary(ggplot2)\ndata(Coupefaim)\ngeom_boxplot(mapping=aes(x=Treat, y=Weight, fill=Treat))\n```\n\n",
+    "created" : 1507898731989.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "32938854",
+    "id" : "C008F6F3",
+    "lastKnownWriteTime" : 1507899192,
+    "last_content_update" : 1507899193055,
+    "path" : "/media/sf_Shared/Projects/mcpp/mcpp.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

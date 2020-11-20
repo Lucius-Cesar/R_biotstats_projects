@@ -1,0 +1,7 @@
+"0","```r
+biom18$age_categorie <- cut(biom18$age, include.lowest=TRUE,  right=TRUE,
+                          breaks=c(18, 33, 65))
+## Recoding biom$age_categorie
+biom$age_categorie <- as.character(biom$age_categorie)
+biom$age_categorie <- factor(biom$age_categorie)
+```"

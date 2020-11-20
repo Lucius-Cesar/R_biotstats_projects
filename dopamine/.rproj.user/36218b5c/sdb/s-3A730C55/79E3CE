@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1507894165309.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "79E3CE",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1507894165309,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "5DEA9118",
+        "caption" : "Dopamine",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Dopamine&cache_key=5DEA9118",
+        "displayedObservations" : "12",
+        "environment" : "",
+        "object" : "Dopamine",
+        "preview" : "0",
+        "totalObservations" : "12",
+        "variables" : "2"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

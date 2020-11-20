@@ -1,0 +1,6 @@
+"0","```r
+type_ant_bar <- qplot(x = as.factor(type_ant),
+  data = biom, geom = \"bar\") + scale_x_discrete( drop = FALSE ) + coord_flip()
+## <other operations here...>
+plot(type_ant_bar)
+```"

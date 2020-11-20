@@ -1,0 +1,8 @@
+"0","```r
+#plot(lm., which = 3)
+lm. %>% qplot(.fitted, sqrt(abs(.stdresid)), data = .) +
+  geom_smooth(se = FALSE) +
+  xlab(\"Fitted values\") +
+  ylab(expression(bold(sqrt(abs(\"Standardized residuals\"))))) +
+  ggtitle(\"Scale-Location\")
+```"

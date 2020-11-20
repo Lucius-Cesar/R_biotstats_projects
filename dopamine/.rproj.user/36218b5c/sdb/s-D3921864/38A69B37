@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"R Notebook\"\noutput: html_notebook\n---\n\n```{r}\nlibrary(readr)\nDopamine <- read_delim(\"data/Dopamine.csv\", \n    \"\\t\", escape_double = FALSE, trim_ws = TRUE)\nView(Dopamine)\n```\n\n```{r}\n## Recoding Dopamine$Treat\nDopamine$Treat <- factor(Dopamine$Treat)\n\n\n```\n\n```{r}\nsummary(Dopamine)\n```\n\n```{r}\nlibrary(ggplot2)\nggplot(data=Dopamine)+\n geom_boxplot(mapping=aes(x= Treat, y = Dopa, fill=Treat))\n```\n\nHypothèse : le toluène augmente-t-il la concentration en dopamine dans le cerveau des rats ?\n\n\n#Test quantile quantile\n```{r}\ncar::qqPlot(Dopamine$Dopa, distribution = \"norm\",\n  envelope = 0.95, col = \"Black\", ylab = \"Dopa\")\n```\n\n```{r}\nDopamine %>% mutate(Dopamine.res = Dopa - ave(Dopa, Treat)) -> Dopamine\n```\n\n```{r}\nt.test(DeltaM ~ Treat, data = Dopamine,\n  alternative = \"less\", conf.level = 0.95, var.equal = FALSE)\n```\n\n",
+    "created" : 1507894139407.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3558412366",
+    "id" : "38A69B37",
+    "lastKnownWriteTime" : 1507897120,
+    "last_content_update" : 1507897119955,
+    "path" : "/media/sf_Shared/Projects/dopamine/dopamine.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

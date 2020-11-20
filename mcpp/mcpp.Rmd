@@ -1,0 +1,279 @@
+---
+title: "Métachlorophénylpipérazine"
+author:
+  - name: "Delgrange Lucien"
+    affiliation: "Etudiant à l'université de Mons en BAC2 Biologie"
+date: "11 décembre 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+---
+
+#Introduction
+
+La métachlorophénylpipérazine (mCPP) est une molécules illicite dans de nombreux pays ( notamment en Belgique). Elle est souvent comparée à l'Ecstasy pour ses nombreux effets psychiatriques et neurologiques. Bien qu'aucune propriété significativement renforçatrice n'ai été mise en évidence par les chercheurs,  la molécule pourrait avoir des applications médicales concernant les migraines et l'obésité.
+
+![Structure chimique du du métachlorophénylpipérazine](image/MCPP_2D.png)
+
+#But
+
+L'objet de cette analyse est de savoir si le mcpp peut permettre de perdre du poids. Nous nous intéresserons aussi à la réponse du médicament selon sexe.
+
+# Matériel et méthode
+
+## Acquisition des données 
+ 
+ Les données proviennent de l'étude de P.A. Sargent, A.L. Sharpley, C. Williams, E.M. Goodall, P.J. Cowen
+: *5-HT2C receptor activation decreases appetite and body weight in obese subjects, Psychopharmacology (1997) 133 : 309312*.
+ 
+ 2 cures ont été administrée à 18 sujets avec un IMC de 29,6 (neuf hommes et neuf femmes dans intervalle de 20-49 ans) sur une période de 14 jours et une période de 14 jours entre chaque traitement. La dose était de 20 mg pour les femmes et de 25 mg pour les hommes et était donnéee deux fois par jour. 
+ 
+## Analyse des données
+
+
+Nous fixons le seuil alpha à 0.05 pour l'ensemble des analyses ci dessous
+
+1) Pour comparer la différence de masse selon le type de traitement, nous utilisons le test d'hypothèse : test-t de Student comparant deux groupes d’échantillons indépendants.
+
+Les hypothèses sont :
+
+\(H_{0}\) : \(\mu_{1} = \mu_{2}\)
+
+\(H_{1}\) : \(\mu_{1} \ne  \mu_{2}\) 
+                  
+Les conditions de validités du test sont : 
+
+- Un échantillonnage aléatoire
+- Des observations indépendantes les unes des autres
+
+Ces deux conditions sont supposées validées
+
+- Une distribution des résidus qui doit suivre une distribution normale ou approximativement normale : un graphique quantile-quantile de comparaison de la distribution des résidus avec une distribution normale permet d'observer si cette condition est respectée.
+
+Et/ou un grand nombre d'observations
+
+Cette dernière condition sera testée lors de l'analyse statistique.
+
+2) Pour comparer la différence de masse en fonction du traitement et de l'âge (regroupés en 1 variable), nous utilisons le test d'hypothèse de l'Anova à un facteur
+
+Les hypothèses sont :
+
+$H_{0}$ : $\mu_{1} =  \mu_{2} =  ... = \mu_{p}$
+
+$H_{1}$  :  au moins une des moyennes est différente des deux autres
+
+Les conditions de validité du test sont :
+
+- Un échantillonage aléatoire
+- Des observations indépendantes les unes des autres
+
+Ces deux conditions sont supposées validées
+
+- Une distribution normale des résidus : un graphique quantile-quantile de comparaison de la distribution des résidus avec une distribution normale permet d'observer si cette condition est respectée.
+- L'homoscédasticité : la variance des erreurs est constante. Cette condition est testée avec le test de de Barlett qui a pour hypothèse : 
+$H_{0}$ : Homoscédasticité : $var_{1} = var_{2} = ... = var_{p}$
+
+$H_{1}$  :  Hétéroscédasticité : au moins une variance est différente
+
+Une comparaison multiple de tukey va être utilisée pour comparer les doses de vitamine C 2 à 2. Il s'agit d'une succession de tests de student. 
+# Résultats 
+
+
+```{r}
+library(readr)
+mcpp <- read_csv("data/mcpp.csv")
+View(mcpp)
+```
+
+## Différence de masse
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+
+```{r}
+library(dplyr)
+mcpp%>%group_by(traitement)%>% summarise("mean" = mean(poids, na.rm=TRUE), "sd" = sd(poids, na.rm=TRUE), "number" = length(poids)) -> poids_traitement
+
+library(knitr)
+
+kable(x = poids_traitement, format = "pandoc", caption = "Tableau de la différence de masse moyenne selon le type de traitement ", col.names = c("Traitement", "différence de masse moyenne", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+La moyenne de la différence de masse est différente pour les personnes ayant été traitées avec du mcpp ($-0.7888889	\pm0.7144631 kg$) et pour personnes ayant été traitée au placebo ($-0.0388889	\pm0.8562153 kg$). Les valeurs des écarts-types sont élevées. Les mesures de différence de masse sont par conséquent, très dispersées autours de la moyenne.
+
+
+#### Statistiques descriptives graphiques
+
+```{r}
+library("ggplot2")
+ggplot(data=mcpp) +
+  geom_boxplot(mapping=aes(x= as.factor(traitement),y=poids), fill=c("#26c40d", "#0d6bc4"))+
+theme_classic()+
+   labs( x = "Traitement", y = "Différence de masse", caption = " Boxplot de la comparaison de la différence de masse selon le type de traitement")+
+theme(plot.caption = element_text(hjust = 0.5, size = 10))
+ 
+```
+La représentation graphique sous forme de boxplot permet de se représenter visuellement sur les 5 nombres : la valeur minimale, le premier quartile, la mediane, le troisième quartile et la valeur maximale. Le graphique semble nous faire part d'une différence de différence de masse entre les personnes traitées avec du mcpp et avec le placebo.
+
+# Statistique 
+
+##Test d'hypothèse de student indépendant
+
+```{r}
+library("dplyr")
+mcpp %>% mutate(poids.res = poids - ave(poids, traitement)) -> mcpp
+```
+
+
+```{r}
+car::qqPlot(mcpp$poids.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus des différence des masses")
+```
+ Tous les points suivent une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application du test-t de student comparant deux groupes d'échantillons indépendants est respecté. 
+
+- Le nombre d'obeservations est suffisant.
+
+-> Le tes-t de student indépendant peut être appliqué.
+
+
+\(H_{0}\) : \(\mu_{mcpp} = \mu_{placebo}\)
+
+\(H_{1}\) : \(\mu_{mcpp} \ne  \mu_{placebo}\) 
+
+
+```{r}
+t.test(poids ~ traitement, data = mcpp,
+  alternative = "less", conf.level = 0.95, var.equal = TRUE)
+```
+
+Le degré de confiance est fixé au seuil \(\alpha\) de 0.05
+Le seuil de probabilité critique ( p ) est égale à 0.003656
+p < 0.05 
+
+On a une différence significative entre les moyennes
+-> l'hypothèse \(H_{0}\) : \(\mu_{mcpp} = \mu_{placebo}\) est à rejeter (avec un degré de confiance de 0.05)
+
+## Perte de poids par sexe
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+```{r}
+mcpp$traitement_sexe <- with(mcpp, interaction(traitement,  sexe), drop = TRUE )
+
+## Recodage de mcpp$traitement_sexe
+mcpp$traitement_sexe <- as.character(mcpp$traitement_sexe)
+mcpp$traitement_sexe[mcpp$traitement_sexe == "mcpp.F"] <- "Femmes traitées au mcpp"
+mcpp$traitement_sexe[mcpp$traitement_sexe == "placebo.F"] <- "Femmes traitées au placebo"
+mcpp$traitement_sexe[mcpp$traitement_sexe == "mcpp.M"] <- "Hommes traités au mcpp"
+mcpp$traitement_sexe[mcpp$traitement_sexe == "placebo.M"] <- "Hommes traités au placebo"
+mcpp$traitement_sexe <- factor(mcpp$traitement_sexe)
+
+```
+
+```{r}
+library(dplyr)
+mcpp%>%group_by(traitement_sexe)%>% summarise("mean" = mean(poids, na.rm=TRUE), "sd" = sd(poids, na.rm=TRUE), "number" = length(poids)) -> perte_poids_traitement_sexe
+
+library(knitr)
+
+kable(x = perte_poids_traitement_sexe, format = "pandoc", caption = "Tableau de la différene de masse (kg) en selon le traitement et le sexe", col.names = c("type de traitement et sexe", "Différence de masse moyenne ", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+Les moyennes des différences des masses sont toutes différentes pour chaque traitement groupé à un sexe. 
+
+#### Statistiques descriptives graphiques
+
+```{r}
+
+library(ggplot2)
+ggplot(data=mcpp) +
+  geom_boxplot(mapping=aes(x= as.factor(traitement),y=poids, fill=sexe))+
+  theme_classic() +
+ labs( x = "Catégorie d'âge", y = "Différence de masse", caption = expression(paste("Boxplot de comparaison des différences de masses  selon leur type de traitement et leur sexe.")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 9))
+```
+Le graphique semble nous montrer une différence entre les différences de masses pour chaque traitement groupé à un sexe
+
+Il semble également nous montrer une différence entre le logarithme des masses des hommes agés de 18 à 33 ans et des hommes agés de 34 à 65 ans.
+
+## Statistique 
+
+###Test d'hypothèse de l'Anova à 1 facteur
+```{r}
+library(tidyverse)
+car::qqPlot(mcpp$poids.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus des différence des masses")
+```
+
+  Tous les points suivent une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application de l'ANOVA à un facteur est respecté. 
+  
+```{r}
+bartlett.test(poids  ~ traitement_sexe, data = mcpp)
+```
+
+k^2^ = 0.66547, p = 0.717
+ Le degré de confiance est fixé au seuil \(\alpha\) de 0.05
+Le seuil de probabilité critique ( p ) est égale à 0.913
+p > 0.05 
+
+-> On rejete $H_{1}$  stipulant qu'au moins une des moyennes est différente des deux autres
+ 
+Il y a homoscédasticité des variances au seuil \(\alpha\) de 0.05
+
+
+
+```{r}
+anova(anova. <- lm(poids ~ traitement_sexe, data = mcpp))
+```
+$H_{0}$ : $\mu_{1} =  \mu_{2} =  ... = \mu_{p}$
+
+$H_{1}$  :  au moins une des moyennes est différente des deux autres
+
+Seuil \(\alpha\) fixé à 0.05
+F = 67.416, p = < 0.0492
+P<0.05 
+
+On rejette : $H_{0}$ : $\mu_{1} =  \mu_{2} =  ... = \mu_{p}$ au seuil \(\alpha\) fixé à 0.05
+
+
+
+
+```{r}
+summary(anovaComp. <- confint(multcomp::glht(anova.,
+  linfct = multcomp::mcp(traitement_sexe = "Tukey")))) # Add a second factor if you want
+.oma <- par(oma = c(0, 5.1, 0, 0)); plot(anovaComp.); par(.oma); rm(.oma)
+```
+Le graphique de comparaison multiple de Tukey nous montre qu'il y a une différence significative de différence de masse au seuil $\alpha$ de 0.05 entre chaque traitement groupé à 1 sexe.En effet,  Aucune des intervalles ne passe par la droite verticale en  x=0. La table de comparaison multiple de Tukey confirme ce résultat. 
+Nous pouvons observer sur le graphique que les hommes traités au mcpp sont à la limite de se différencier des autres groupes. 
+
+# Discussion 
+
+Le test-t de Student comparant deux groupes d’échantillons indépendants nous indique que la différence masse des personnes traitées au mcpp, avec comme valeur moyenne -0.7888889 ± 0.2172244 est significativement différent de la différence de masse des personnes traitée au placebo,avec comme valeur moyenne 4.174208 ± 0.1881631.
+
+L'ANOVA à un facteur nous donne un résultat particulier. L'analyse des variances nous donne l'information qu'au moins une des moyennes est significativement différente mais le test de comparaison multiple de tukey nous indique qu'aucune des valeurs des différences de masse n'est significativement différente entre chaque traitement groupé à 1 sexe. Cela s'explique par le fait que les hommes traités au mcpp sont à la limite de se différencier des autres groupes.
+
+Bien que significativement + efficace qu'un placebo pour la perte de poids, on peut se poser la question éthique de l'utilisation du mcpp. En effet, l'utilisation de cette substance illégale peut mener à troubles psychiatriques et d'addicton. Ce n'est certainement pas la technique la + efficace et encore moins la + sûre pour perdre du poids...
+
+# Conclusion 
+
+En conclusion, le mcpp est significativement plus efficace qu'un placebo pour perdre de la masse mais il n'y a pas de différence significative de réponse au médicament en fonction du sexe. 
+
+# Bibliographie
+
+- P.A. Sargent, A.L. Sharpley, C. Williams, E.M. Goodall, P.J. Cowen
+: *5-HT2C receptor activation decreases appetite and body weight in obese subjects, Psychopharmacology (1997) 133 : 309312*.
+
+- Yannick LECOMPTE1, Isabelle EVRARD2, Jocelyne ARDITTI, La métachlorophénylpipérazine (mCPP): 
+une nouvelle drogue de synthèse, Congrès annuel de la Société Française de Toxicologie 23 et 24 octobre 2006, Paris. 
+    
+
+
+

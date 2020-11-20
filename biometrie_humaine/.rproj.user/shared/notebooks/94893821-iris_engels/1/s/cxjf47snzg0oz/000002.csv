@@ -1,0 +1,14 @@
+"0","```r
+# je souhaite utiliser un outil graphique permettant de montrer la variation de la longueur des pÃ©tales en fonction de mes 3 espÃ¨ces d'Iris. Il s'agit donc d'une variable numÃ©rique (quantitative continu ) avec une variable facteur (variable qualitative non-ordonnÃ©e)
+#J appelle le package liÃ© aux graphiques utilisant ggplot2
+library(tidyverse)
+a <- ggplot(data = iris) + # je souhaite un graphique dont le jeu de donnÃ©es s'appelle iris, + ...
+  geom_boxplot(mapping = aes(x = Species, y = Petal.Length)) # Je souhaite un boxplot dont les donnÃ©es seront rÃ©parties en x avec les espÃ¨ces et en y selon la longueur des pÃ©tales. 
+# a 
+# Ce graphique trop simple ne me convient pas, il lui manque une lÃ©gende, des axes en franÃ§ais, un peu de couleurs,... Je vais donc l'amÃ©liorer 
+ggplot(data = iris)+
+  geom_boxplot(mapping = aes(x = Species, y = Petal.Length), fill = c(\"#27408B\", \"#EE9A00\", \"#CD0000\"))+ # le choix des couleurs a Ã©tÃ© fait avec l'addins : colour picker 
+  theme_classic() + # dans les aides mÃ©moire de ggplot2, on peut trouver dans la partie theme, comment changer le fond gros par dÃ©faut
+  labs( x = \"EspÃ¨ces\", y = \"Longueur des pÃ©tales\", caption = expression(paste(\"Boite Ã  moustache de la variation de la longueur d' \", italic(\" I. setosa, d' I. versicolor, d'I. verginica \"), \".\")))+ # utilisation de la fonction expression et paste pour permettre d'avoir le nom des espÃ¨ces en italique 
+  theme(plot.caption = element_text(hjust = 0.5, size = 10)) # Je souhaite centrer la lÃ©gende de mon graphique.
+```"

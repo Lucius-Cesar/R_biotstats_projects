@@ -1,0 +1,5 @@
+"0","```r
+library(ggplot2)
+ggplot(data=biom)+
+geom_boxplot(mapping= aes (x=age_categorie, y=masse, fill=age_categorie))
+```"

@@ -1,0 +1,7 @@
+"0","```r
+library(\"cowplot\")
+sexe_bar <- qplot(x = factor(sexe),
+  data = biom, geom = \"bar\") + coord_flip()
+## <other operations here...>
+plot(sexe_bar)
+```"

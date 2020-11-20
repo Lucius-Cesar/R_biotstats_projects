@@ -1,0 +1,210 @@
+---
+title: "biometrie_humaine"
+output: html_notebook
+---
+
+
+```{r}
+library(readxl)
+biometrie_3 <- read_excel("../data/biometrie_10.xlsx", 
+    skip = 26)
+View(biometrie_3)
+
+library(readxl)
+biometrie_4 <- read_excel("../data/biometrie_10.xlsx", 
+    skip = 26)
+View(biometrie_4)
+
+```
+
+```{r}
+library(readxl)
+library("dplyr")
+all_data <- dir("../data", full.names = TRUE)
+# Premier fichier
+biom <- read_excel(all_data[1], skip = 25)
+# ConcatÃ¨ne tous les autres
+for (f in all_data[-1]) {
+  #print(f)
+  biom <- bind_rows(biom, read_excel(f, skip = 25))
+}
+#View(biom)
+```
+```{r}
+library("cowplot")
+sexe_bar <- qplot(x = factor(sexe),
+  data = biom, geom = "bar") + coord_flip()
+## <other operations here...>
+plot(sexe_bar)
+```
+```{r}
+## Recoding biom$activite
+biom$activite[biom$activite == "sédentaire"] <- "sedentaire"
+biom$activite[biom$activite == "active"] <- "actif"
+biom$activite <- factor(biom$activite)
+
+```
+
+```{r}
+activite_bar <- qplot(x = factor(activite),
+  data = biom, geom = "bar") + coord_flip()
+## <other operations here...>
+plot(activite_bar)
+```
+
+```{r}
+habitat_bar <- qplot(x = factor(habitat),
+  data = biom, geom = "bar") + coord_flip()
+## <other operations here...>
+plot(habitat_bar)
+```
+
+
+
+```{r}
+## Recoding biom$type_ant
+biom$type_ant[biom$type_ant == "caucasoïde"] <- "caucasoide"
+biom$type_ant[biom$type_ant == "caucasien"] <- "caucasoide"
+biom$type_ant <- factor(biom$type_ant, levels = c ("australoide","mongoloide","caucasoide","negroide"))
+
+```
+
+```{r}
+type_ant_bar <- qplot(x = as.factor(type_ant),
+  data = biom, geom = "bar") + scale_x_discrete( drop = FALSE ) + coord_flip()
+## <other operations here...>
+plot(type_ant_bar)
+```
+```{r}
+## Recoding biom$type_alimentaire
+biom$type_alimentaire[biom$type_alimentaire == "omnivore"] <- "omni"
+biom$type_alimentaire[biom$type_alimentaire == "vege"] <- "veget"
+biom$type_alimentaire[biom$type_alimentaire == "omn"] <- "omni"
+biom$type_alimentaire <- factor(biom$type_alimentaire, levels = c ("omni","veget","vegan"))
+
+type_alimentaire_bar <- qplot(x = as.factor(type_alimentaire),
+  data = biom, geom = "bar") + scale_x_discrete( drop = FALSE ) + coord_flip()
+## <other operations here...>
+plot(type_alimentaire_bar)
+```
+```{r}
+masse_taille_bar <- qplot(x = taille, y = masse, color =sexe,
+  data = biom, geom = "point")
+## <other operations here...>
+plot(masse_taille_bar)
+```
+
+
+```{r}
+tour_taille_tour_hanche <- qplot(x = tour_hanche, y = tour_taille ,color = sexe,
+  data = biom, geom = "point")
+## <other operations here...>
+plot(tour_taille_tour_hanche)
+```
+
+```{r}
+tour_poignet_tour_bras <- qplot(x = tour_bras, y = tour_poignet, color = sexe,
+  data = biom, geom = "point")
+## <other operations here...>
+plot(tour_poignet_tour_bras)
+```
+
+```{r}
+library("cowplot")
+p. <- qplot(x = alcool, y = tour_taille, color = sexe, shape = activite,
+  data = biom, geom = "point")
+## <other operations here...>
+plot(p.)
+```
+
+```{r}
+library("cowplot")
+p. <- qplot(x = taille, data = biom,
+  geom = "histogram") # Add binwidth = x to force size of classes
+## <other operations here...>
+plot(p.)
+```
+
+On étudie l'influence de lâge sur la masse
+```{r}
+biom %>% filter(age >= 18) -> biom18
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(data = biom18, mapping = aes(x = age, y = masse)) +
+  geom_point( mapping = aes(color = sexe))+
+  geom_smooth(method = "lm")
+
+labs (x= "age", y="masse",caption= "masse en fonction de l'age")
+theme ( plot.caption = element_text(hjust = 0.5, size=10))
+```
+
+## Cutting biom$age into biom$age_categorie
+```{r}
+biom18$age_categorie <- cut(biom18$age, include.lowest=TRUE,  right=TRUE,
+                          breaks=c(18, 33, 65))
+
+
+## Recoding biom$age_categorie
+biom$age_categorie <- as.character(biom$age_categorie)
+biom$age_categorie <- factor(biom$age_categorie)
+
+```
+```{r}
+library(ggplot2)
+ggplot(data=biom18)+
+geom_boxplot(mapping= aes (x=age_categorie, y=masse, fill=age_categorie))
+```
+
+#Test de d'hypothèse
+
+H0: masse 33-65 = masse 18-33
+H1: masse 34-65 > masse 18-33
+
+test des conditions 
+```{r}
+biom18 %>% mutate(masse.res= masse- ave( masse , age)) -> biom18
+```
+
+```{r}
+biom18 %>% mutate(log_masse.res= log10(masse.res)) -> biom18
+```
+
+```{r}
+car::qqPlot(biom18$log_masse.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "log_masse.res")
+```
+
+-> distrib normale 
+
+#test student
+
+```{r}
+t.test(masse ~ age_categorie, data = biom18,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+
+p-value + petit que alpha -> on rejette H0
+
+
+Influence de l'âge sur la masse pour le sexe 
+
+```{r}
+biom18 %>% mutate_each(funs(half = age)) -> biom18
+```
+
+
+
+CORRELATION ENTRE l'AGE et la masse
+
+```{r}
+corrplot::corrplot(cor(biom18[, 2:8],
+  use = "pairwise.complete.obs"), method = "num")
+```
+
+On ne peut pas linéariser entree l'âge et la masse
+
+
+

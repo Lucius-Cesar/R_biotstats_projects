@@ -1,0 +1,421 @@
+
+---
+title: "Biométrie humaine"
+subtitle: "Analyse concernant l'impact de l'âge sur la masse des humains"
+author:
+  - name: "Delgrange Lucien"
+    affiliation: "Etudiant à l'université de Mons en BAC2 Biologie"
+date: "11 décembre 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+---
+
+#Introduction
+
+La mesure des caractéristiques physiques d'un individu humain n'est pas sans intérêts. En effet, l'insuffisance pondérale et l'obésité peuvent induire de nombreuses pathologies. L'élément le plus pertinent pour déceler ces situations risquées est le taux de masse grasse. Les techniques permettant d'estimer celui-ci ( pesée hydrostatique , Impédancemétrie) sont cependant peu accessibles (couteuses) et souvent approximatives. C'est pourquoi de nombreuses formules ont été mises en place pour mesurer la corpulence d'un individu tout en évitant les contraintes liées à la mesure du taux de masse grasse. Pour son côté pratique, l'IMC : indice de masse corporelle est la technique la plus utilisée. En effêt, il repose uniquement sur la taille et la masse de l'individu. Il comporte cependant des biais : comme par exemple, la non prise en compte de la masse musculaire.
+
+De nombreux facteurs peuvent favoriser les problèmes de corpulence. Certains sont contrôlables, comme par exemple l'alimentation et les dépenses physiques. Mais il en existe également d'autres comme les facteurs génétiques et hormonaux.
+
+#But
+
+L'objet de cette analyse est de savoir si l'âge est un des facteurs influençant la masse des humains et si ce facteur est plus marqué ou non chez un des deux sexes. 
+```{r}
+library(readxl)
+biometrie_3 <- read_excel("../data/biometrie_10.xlsx", 
+    skip = 26)
+
+library(readxl)
+biometrie_4 <- read_excel("../data/biometrie_10.xlsx", 
+    skip = 26)
+
+```
+
+# Matériels et méthodes
+
+## Acquisition des données
+
+Les données biométriques ont été recueillies par les étudiants de BAC2 en sciences biologiques à l'université de Mons (Belgique). Chaque étudiant a réalisé une série de mesures qualitative et quantitatives sur 5 personnes ayant de 18 à 65 ans. Les femmes enceintes n'ont pas été mesurées. 
+
+## Analyse des données
+
+Nous fixons le seuil alpha à 0.05 pour l'ensemble des analyses ci dessous
+
+1) Pour comparer les masses selon l'âge et l'augmentation de masse liée à l'âge en fonction du sexe
+, nous utilisons le test d'hypothèse : test-t de Student comparant deux groupes d’échantillons indépendants.
+
+Les hypothèses sont :
+
+\(H_{0}\) : \(\mu_{1} = \mu_{2}\)
+
+\(H_{1}\) : \(\mu_{1} \ne  \mu_{2}\) 
+                  
+Les conditions de validités du test sont : 
+
+- Un échantillonnage aléatoire
+- Des observations indépendantes les unes des autres
+
+Ces deux conditions sont supposées validées
+
+- Une distribution des résidus qui doit suivre une distribution normale ou approximativement normale : un graphique quantile-quantile de comparaison de la distribution des résidus avec une distribution normale permet d'observer si cette condition est respectée.
+
+Et/ou un grand nombre d'observations
+
+Cette dernière condition sera testée lors de l'analyse statistique.
+
+# Résultats 
+```{r}
+library("readxl")
+library("dplyr")
+all_data <- dir("../data", full.names = TRUE)
+# Premier fichier
+biom <- read_excel(all_data[1], skip = 25)
+# ConcatÃ¨ne tous les autres
+for (f in all_data[-1]) {
+  #print(f)
+  biom <- bind_rows(biom, read_excel(f, skip = 25))
+}
+```
+
+```{r}
+## Recoding biom$activite
+biom$activite[biom$activite == "sédentaire"] <- "sedentaire"
+biom$activite[biom$activite == "active"] <- "actif"
+biom$activite <- factor(biom$activite)
+
+## Recoding biom$type_ant
+biom$type_ant[biom$type_ant == "caucasoïde"] <- "caucasoide"
+biom$type_ant[biom$type_ant == "caucasien"] <- "caucasoide"
+biom$type_ant <- factor(biom$type_ant, levels = c ("australoide","mongoloide","caucasoide","negroide"))
+
+```
+
+
+
+
+```{r}
+biom %>% filter(age >= 18) -> biom18
+```
+
+
+
+```{r}
+biom18 %>% filter (biom18$sexe=="f") -> biomf
+biom18 %>% filter (biom18$sexe=="m") -> biomm
+```
+
+
+## Masse des personnes mesurées
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+Le jeu de donnée est découpé en 2 catégories d'âges : 
+- Les personnes agées de 18 à 33 ans
+- Les personnes agées de 34 à 65 ans
+                                          
+```{r}
+library(tidyverse)
+biom18$age_categorie <- cut(biom18$age, include.lowest=TRUE,  right=TRUE,
+                          breaks=c(18, 33, 65))
+
+## Recodage de biom18$age_categorie
+biom18$age_categorie <- as.character(biom18$age_categorie)
+biom18$age_categorie <- factor(biom18$age_categorie)
+
+## Réordonnancement de biom18$age_categorie
+biom18$age_categorie <- factor(biom18$age_categorie, levels=c("[18,33]", "(33,65]"))
+
+## Recodage de biom18$age_categorie
+biom18$age_categorie <- fct_recode(biom18$age_categorie,
+               "18 à 33 ans" = "[18,33]",
+               "34 à 65 ans" = "(33,65]")
+biom18$sexe <- as.character(biom18$sexe)
+biom18$sexe <- factor(biom18$sexe)
+```
+
+
+
+```{r}
+library(dplyr)
+biom18%>%group_by(age_categorie)%>% summarise("mean" = mean(masse, na.rm=TRUE), "sd" = sd(masse, na.rm=TRUE), "number" = length(masse)) -> masse_age
+
+library(knitr)
+
+kable(x = masse_age, format = "pandoc", caption = "Tableau de la masse moyenne des personnes mesurées selon leur catégorie d'âge. ", col.names = c("Catégorie d'âge", "Masse moyenne", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+La moyenne de la masses des personnes mesurées est différente pour les personnes agées 18 à 33 ans ($66.15823	\pm13.07339	kg$) et pour les personnes agées de 34 à 65 ans  ($73.52295\pm16.50527 kg$). 
+
+
+
+
+
+#### Statistiques descriptives graphiques
+
+
+```{r}
+library(ggplot2)
+
+ggplot(data = biom18, mapping = aes(x = age, y = masse)) +
+  geom_point( mapping = aes(color = sexe))+
+  theme_classic() +
+ labs( x = "Age (années)", y = "Masse (kg)", caption = expression(paste("Nuage de point de la masse en fonction de l'âge.")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+Ce graphique nous donne l'information que la population mesurée est répartie en 2 catégories d'âges visibles. 
+
+
+
+
+
+```{r}
+library("ggplot2")
+ggplot(data=biom18) +
+  geom_boxplot(mapping=aes(x= as.factor(age_categorie),y=masse), fill=c("#26c40d", "#0d6bc4"))+
+theme_classic() +
+ labs( x = "Catégorie d'âge", y = "Masse (kg)", caption = expression(paste("Boxplot de comparaison de la masse des personnes mesurées selon leur catégorie d'âge.")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+
+
+La représentation graphique sous forme de boxplot permet de se représenter visuellement sur les 5 nombres : la valeur minimale, le premier quartile, la mediane, le troisième quartile et la valeur maximale. Le graphique semble nous faire part d'une différence entre la masse des personnes agées de 18 à 33 ans et la masse des personnes agées de 34 à 65 ans
+
+
+### Statistiques
+#### Test d'hypothèse
+```{r}
+library(dplyr)
+biom18 %>% mutate(masse.res = masse - ave(masse, age_categorie)) -> biom18
+```
+
+```{r}
+car::qqPlot(biom18$masse.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus de la masse des personnes mesurées",xlab = "Quantiles de la distribution normale")
+```
+- 6 points sur ne suivent pas la distribution normale à une intervalle de confiance de 95%.
+Pour pallier à ce problème, les données peuvent être transformées.
+
+-Le nombre d'observation est élevé, test-t de student comparant deux groupes d'échantillons indépendants peut tout de même être appliqué
+
+Afin d'obtenir un meilleur résultat, la transformation des données a été décidée. 
+
+## Logarithme des Masses des personnes mesurées
+```{r}
+library(dplyr)
+biom18%>% mutate(log_masse = log(masse)) -> biom18
+```
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+
+```{r}
+library(dplyr)
+biom18%>%group_by(age_categorie)%>% summarise("mean" = mean(log_masse, na.rm=TRUE), "sd" = sd(log_masse, na.rm=TRUE), "number" = length(log_masse)) -> log_masse_age
+
+library(knitr)
+
+kable(x = log_masse_age, format = "pandoc", caption = "Tableau du logarithme des masse moyenne des personnes mesurées selon leur catégorie d'âge. ", col.names = c("Catégorie d'âge", "Logarithme des moyennes des masses", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+Le logarithme des moyennes des masses des personnes mesurées est différente pour les personnes agées 18 à 33 ans ($4.174208	\pm0.1881631$) et pour les personnes agées de 34 à 65 ans  ($4.274070\pm0.2172244	$). 
+
+
+```{r}
+library("ggplot2")
+ggplot(data=biom18) +
+  geom_boxplot(mapping=aes(x= as.factor(age_categorie),y=log_masse), fill=c("#26c40d", "#0d6bc4"))+
+theme_classic() +
+ labs( x = "Catégorie d'âge", y = "Logarithme des masses des personnes mesurées", caption = expression(paste("Boxplot de comparaison des logarithmes des masses des personnes mesurées selon leur catégorie d'âge.")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+La représentation graphique sous forme de boxplot permet de se représenter visuellement sur les 5 nombres : la valeur minimale, le premier quartile, la mediane, le troisième quartile et la valeur maximale. Le graphique semble nous faire part d'une différence entre le logarithme des masses des personnes agées de 18 à 33 ans et la masse des personnes agées de 34 à 65 ans
+
+```{r}
+biom18 %>% filter (biom18$sexe=="f") -> biomf
+biom18 %>% filter (biom18$sexe=="m") -> biomm
+```
+
+```{r}
+biom18$categorie_age_sexe <- with(biom18, interaction(age_categorie,  sexe), drop = TRUE )
+## Recodage de biom18$categorie_age_sexe
+biom18$categorie_age_sexe <- fct_recode(biom18$categorie_age_sexe,
+               "Femmes de 18 à 33 ans" = "18 à 33 ans.f",
+               "Femmes de 34 à 65 ans" = "34 à 65 ans.f",
+               "Hommes de 18 à 33 ans" = "18 à 33 ans.m",
+               "Hommes de 34 à 65 ans" = "34 à 65 ans.m")
+
+```
+
+```{r}
+library(dplyr)
+biom18%>%group_by(categorie_age_sexe)%>% summarise("mean" = mean(log_masse, na.rm=TRUE), "sd" = sd(log_masse, na.rm=TRUE), "number" = length(log_masse)) -> log_masse_age_sexe
+
+library(knitr)
+
+kable(x = log_masse_age_sexe, format = "pandoc", caption = "Tableau du logarithme des masse moyenne des personnes mesurées selon leur catégorie d'âge et leur sexe. ", col.names = c("Catégorie d'âge et sexe", "Logarithme des moyennes des masses", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+- Le logarithme des moyennes des masses des est différent entre lesfemmes agées 18 à 33 ans ($4.102882	\pm0.1640548$) et les femmes agées de 34 à 65 ans  ($4.177198\pm0.1861352$). 
+
+- Il est également différent entre les hommes de 18 à 33 ans ($4.259404\pm0.1813572$) et les hommes de 34 à 65 ans ($4.423415\pm0.1746314$)
+```{r}
+
+library(ggplot2)
+ggplot(data=biom18) +
+  geom_boxplot(mapping=aes(x= as.factor(age_categorie),y=log_masse, fill=sexe))+
+  theme_classic() +
+ labs( x = "Catégorie d'âge", y = "Logarithme des Masses", caption = expression(paste("Boxplot de comparaison des logarithme des masses des personnes mesurées selon leur catégorie d'âge et leur sexe.")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 9))
+```
+Le graphique semble nous montrer une différence entre le logarithme des masses des femmes agées de 18 à 33 ans et des femmes agées de 34 à 65 ans.
+
+Il semble également nous montrer une différence entre le logarithme des masses des hommes agés de 18 à 33 ans et des hommes agés de 34 à 65 ans.
+
+### Statistiques
+
+#### Tests d'hypothèse 
+
+##### Moyennes des logarithmes des masses
+
+```{r}
+library(dplyr)
+biom18%>% mutate(log_masse= log (masse)) -> biom18
+
+library(dplyr)
+biom18 %>% mutate(log_masse.res = log_masse - ave( log_masse, age_categorie)) -> biom18
+```
+
+
+```{r}
+car::qqPlot(biom18$log_masse.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus du logarithme des masses",xlab = "Quantiles de la distribution normale")
+```
+Tous les points suivent une distribution normale.
+
+- La distribution des résidus du logarithme des masses suit une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application du test-t de student comparant deux groupes d'échantillons indépendants est donc respecté. 
+
+- Le nombre d'obeservations est élevé.
+
+-> Le test-t de student indépendant peut être appliqué.
+
+Les hypothèses sont :
+
+\(H_{0}\) : \(\mu_{18-33} = \mu_{34-65}\)
+
+\(H_{1}\) : \(\mu_{18-33} \ne  \mu_{34-65}\)
+
+##### Moyennes des logarithmes des masses des hommes
+
+```{r}
+library(dplyr)
+biomm %>% mutate(log_masse= log (masse)) -> biomm
+
+```
+
+
+```{r}
+library(dplyr)
+biomm %>% mutate(log_masse.res = log_masse - ave( log_masse, age_categorie)) -> biomm
+```
+
+```{r}
+car::qqPlot(biomm$log_masse.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus des Logarithmes des masses des hommes",xlab = "Quantiles de la distribution normale")
+```
+Seulement 2 points ne suivent une distribution normale.
+
+- La distribution des résidus du logarithme de la masse des homme suit à à peu près une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application du test-t de student comparant deux groupes d'échantillons indépendants est respecté. 
+
+- Le nombre d'obeservations est élevé.
+
+-> Le test-t de student indépendant peut être appliqué.
+
+Les hypothèses sont :
+
+\(H_{0}\) : \(\mu_{♂18-33} = \mu_{♂34-65}\)
+
+\(H_{1}\) : \(\mu_{♂18-33} \ne  \mu_{♂34-65}\)
+
+```{r}
+t.test(log_masse ~ age_categorie, data = biomm,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+Le degré de confiance est fixé au seuil \(\alpha\) de 0.05
+Le seuil de probabilité critique ( p ) est égale à 0.0009517
+p < 0.05
+
+->On a une différence significative entre les moyennes au seuil \(\alpha\) de 0.05
+-> L'hypothèse \(H_{0}\) : \(\mu_{♂18-33} = \mu_{♂34-65}\) est rejetée
+
+##### Moyennes des logarithmes des masses des femmes
+
+```{r}
+library(dplyr)
+biomf %>% mutate(log_masse= log (masse)) -> biomf
+```
+
+```{r}
+biomf %>% mutate(log_masse.res= log_masse - ave( log_masse, age_categorie)) -> biomf
+
+```
+
+```{r}
+car::qqPlot(biomf$log_masse.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Logarithme du résidu de la masse des femmes",xlab = "Quantiles de la distribution normale")
+```
+Tous les points suivent une distribution normale.
+
+- La distribution des résidus des logarithmes des masse des femmes suit une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application du test-t de student comparant deux groupes d'échantillons indépendants n'est pas respecté. 
+
+- Le nombre d'obeservations est élevé.
+
+-> Le test-t de student indépendant peut être appliqué.
+
+\(H_{0}\) : \(\mu_{♀18-33} = \mu_{♀34-65}\)
+
+\(H_{1}\) : \(\mu_{♀18-33} \ne  \mu_{♀34-65}\)
+
+```{r}
+t.test(log_masse ~ age_categorie, data = biomf,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+Le degré de confiance est fixé au seuil \(\alpha\) de 0.05
+Le seuil de probabilité critique ( p ) est égale à 0.06137
+p < 0.05
+
+->On n'a pas de différence significative entre les moyennes au seuil \(\alpha\) de 0.05
+-> L'hypothèse \(H_{1}\) : \(\mu_{♀18-33} \ne  \mu_{♀34-65}\) est rejetée
+
+#Discussion
+
+Bien que le test de student aurait pu être appliqué sans que les résidus ne suivent une distribution normale, il a été décidé de travailler avec le logarithme des masses. 
+Le test-t de Student comparant deux groupes d’échantillons indépendants nous indique que le logarithme des masses des personnes agées de 34 à 65 ans, avec comme valeur moyenne 4.274070 ± 0.2172244 est plus grand que le logarithme des masses des personnes agées de 18 à 33 ans,avec comme valeur moyenne 4.174208 ± 0.1881631.
+
+Le logarithme des masses des hommes agés de 34 à 65 ans, avec comme valeur moyenne (4.423415±0.1746314)
+,est significativement différent du logarithme des masses des hommes agés de 18 à 33 ans (avec comme valeur moyenne 4.259404±0.1813572).
+
+Le logarithme des masses des femmes agées de 34 à 65 ans, avec comme valeur moyenne (4.177198±0.1861352) n'est pas significativement différent du logarithme des masses des femmes agées de 18 à 33 ans ( avec comme valeur moyenne 4.102882±0.1640548).
+
+La limite de cette analyse réside dans le fait que la plus part des échantillons ont été mesuré dans l'entourage ( familles, amis) de la personne ayant effectué les mesures. Ainsi, des facteurs génétiques et culturels communs ne rendent pas compte de la réelle diversité biométrique.  Les deux catégories d'âges apparues dans le graphique nuage de points de la masse en fonction de l'âge mettent clairement en évidence la présence de deux générations distinctes : les étudiants et leur frères et soeurs dans la catégorie des 18-13 ans et les parents et grands parents dans la catégorie des 34 - 65 ans. 
+
+#Conclusion
+
+Dans les limites de l'analyse: l'âge est un facteur impactant le logarithme de la masse des humains. Le logarithme de la masse des humains est significativement plus élevé pour les personnes de 34 à 65 ans que pour les personnes de 18 à 33ans.
+Le logarithme des masses des hommes de 34 à 65 ans est significativement plus grand que le logarithme de la masse des hommes de 18 à 33 ans tandis que le logarithme de la masses des femmes de 34 à 65 ans n'est pas significativement différentt du logarithme de la masse des femmes de 18 à 33 ans.
+
+#Bibliographies
+
+- T. de Saint Pol, 2007, « Comment mesurer la corpulence et le poids "idéal" ? Histoire, intérêts et limites de l’Indice de masse corporelle », Notes & Documents, 200701, Paris, Sciences Po/CNRS.
+
+

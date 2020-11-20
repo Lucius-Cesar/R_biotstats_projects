@@ -1,0 +1,7 @@
+"0","```r
+library(\"cowplot\")
+p. <- qplot(x = taille, data = biom,
+  geom = \"histogram\") # Add binwidth = x to force size of classes
+## <other operations here...>
+plot(p.)
+```"

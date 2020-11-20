@@ -1,0 +1,7 @@
+"0","```r
+ggplot(data = iris)+
+  geom_boxplot(mapping = aes(x = Species, y = Petal.Length), fill = c(\"#27408B\", \"#EE9A00\", \"#CD0000\"))+ 
+  theme_classic() + 
+  labs( x = \"EspÃ¨ces\", y = \"Logarithme des longueurs des pÃ©tales\", caption = expression(paste(\"Boite Ã  moustache de la variation \n du logarithme des longueurs de pÃ©tales d' \", italic(\" I. setosa, d' I. versicolor, d'I. verginica \"), \".\")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```"

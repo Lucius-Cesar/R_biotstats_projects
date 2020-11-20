@@ -1,0 +1,6 @@
+"0","```r
+library(ggplot2)
+ggplot(data = biom, mapping = aes(x = age, y = masse)) +
+  geom_point( mapping = aes(color = sexe))+
+  geom_smooth(method = \"lm\")
+```"

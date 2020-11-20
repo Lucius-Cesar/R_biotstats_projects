@@ -1,0 +1,9 @@
+"0","```r
+bartlett.test(log_pl  ~ Species, data = iris)
+```"
+"1","
+	Bartlett test of homogeneity of variances
+
+data:  log_pl by Species
+Bartlett's K-squared = 2.3295, df = 2, p-value = 0.312
+"

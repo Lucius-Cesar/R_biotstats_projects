@@ -1,0 +1,242 @@
+---
+title: "Biométrie des oursins violets"
+subtitle: "Différence entre la masse des gonades des *P.lividus* sauvages et en echiniculture"
+author:
+  - name: "Delgrange Lucien"
+    présentation: "Etudiant à l'université de Mons en BAC2 Biologie"
+date: "11 décembre 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+---
+
+#Introduction
+
+L'oursin violet : *Paracentrotus lividus* (Lamarck, 1816), est un oursin de la famille des 
+Parechinidae principalement représenté en mer Méditerrannée, en Océan Atlantique, en Manche et en mer du Nord. Il s'agit d'une espèce gonochorique dont les gonades sont consommées par l'homme. Organisme benthique et brouteur, il se nourrit principalement d'algues. Sa taille moyenne (test et piquants) est d'environ 8 cm.
+
+#But
+
+L'objet de cette analyse est de savoir si l'echiniculture des *Paracentrotus lividus* a une influence sur la masse de leurs gonades. 
+
+# Matériel et méthode
+
+## Acquisition des données 
+
+Les observations biométriques utilisées dans ce travail proviennent d'une étude expérimentale sur la croissance des *Paracentrotus lividus* de 1996 publiée dans " Journal of Experimental Marine Biology and Ecology " et réalisée par Ph. Grosjean, Ch. Spirlet et M. Jangoux. 
+
+Les oursins sauvages mesurés ainsi que la souche originelle des oursins d'élevage proviennent de la cote rocheuse de Morgat en Bretagne ( France ). 
+
+```{r}
+library(tidyverse)
+library(cowplot)
+#?map_data()
+world <- map_data("world")
+world$region <- as.factor(world$region)
+world$subregion <- as.factor(world$subregion)
+France <- filter(world, region == "France")
+
+ggplot(data = France) +
+  geom_polygon(mapping = aes(long, lat, group = group), fill= "white", color = "black")  +
+  geom_point(aes(y = 48.230110 , x = -4.511736 , color = "#CD0000"), size = 2, show.legend = FALSE)+theme(plot.caption = element_text(hjust = 0.5), axis.line = element_blank(), axis.title = element_blank(),axis.text = element_blank(), axis.ticks = element_blank()) +
+  coord_quickmap() +
+  labs( caption = "Carte de la france avec la mise en évidence de Morgat ( Bretagne ) ")
+```
+
+## Analyse des données
+
+1) Pour comparer la masse des gonades des oursins d'élevage et des oursins sauvages nous utilisons le test d'hypothèse : test-t de Student comparant deux groupes d’échantillons indépendants.
+
+Les hypothèses sont : \(H_{0}\) : \(\mu_{1} = \mu_{2}\)
+                      \(H_{1}\) : \(\mu_{1} \ne$  \mu_{2}\) 
+Les conditions de validités du test sont : 
+
+- Un échantillonnage aléatoire
+- Des observations indépendantes les unes des autres
+
+COLOR : Ces deux conditions sont supposées validées
+
+- Une distribution des résidus qui doit suivre une distribution normale ou approximativement normale : un graphique quantile-quantile de comparaison de la distribution des résidus avec une distribution normale permet d'observer si cette condition est respectée.
+
+Et/ou un grand nombre d'observations
+
+Cette dernière condition sera testée lors de l'analyse statistique 
+
+2) Un modèle de régression linéaire sera utilisé pour établir une relation linéaire entre 2 variables quantitatives. Le test ne traite pas ces 2 variables de manière égale : une des deux variables est dite dépendante de l'autre ( indépendante ).
+
+- on utilise comme critère de détermination de la droite : la minimisation de la somme des carrés des résidus 
+# Résultats 
+
+```{r}
+library(readxl)
+oursins <- read_excel("../data/oursins.xlsx", 
+    skip = 9)
+View(oursins)
+
+```
+
+## Masse des gonades 
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+La moyenne de la masses des gonades est différente pour les oursins sauvages ($1.00\pm1.53 g$) et pour les oursins d'élevage  ($1.83\pm3.04 g$). Les valeurs des écarts-types sont plus élevées que les valeurs des moyennes. Les mesures de la masse des gonades sont par conséquent, très dispersées autours de la moyenne.
+
+```{r}
+library(dplyr)
+oursins%>%group_by(origine)%>% summarise("mean" = mean(gonades, na.rm=TRUE), "sd" = sd(gonades, na.rm=TRUE), "number" = length(gonades)) -> gon_or
+
+library(knitr)
+
+kable(x = gon_or, format = "pandoc", caption = "Tableau de la masse des gonades moyenne (en g) des oursins sauvages et d'élevage ", col.names = c("Origine", "Masse des gonades moyenne", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+
+#### Statistiques descriptives graphiques
+
+La représentation graphique sous forme de boxplot permet de se représenter visuellement sur les 5 nombres : la valeur minimale, le premier quartile, la mediane, le troisième quartile et la valeur maximale. Ceux-ci semblent nous faire part d'une différence entre la masses des gonades des *P.lividus* sauvages et d'élevage.
+
+```{r}
+library("ggplot2")
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(origine),y=gonades), fill=c("#26c40d", "#0d6bc4"))+
+theme_classic() +
+ labs( x = "Origine", y = "Masse des gonades", caption = expression(paste("Boxplot de comparaison de la masse des gonades des ", italic(" P. lividus "), ".")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+
+Il semble également y avoir une variation de la  masses des gonades des *P.lividus* en fonction du stade de maturité
+
+```{r}
+library(ggplot2)
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(maturite),y=gonades, fill=origine))+
+  theme_classic() +
+ labs( x = "Origine", y = "Masse des gonades", caption = expression(paste("Boxplot de comparaison de la masse des gonades des ", italic(" P. lividus "), "en fonction du stade de maturité")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+
+### Statistiques
+#### Test d'hypothèse
+```{r}
+library(dplyr)
+oursins %>% mutate(gonades.res = gonades - ave(gonades, origine)) -> oursins
+```
+
+```{r}
+car::qqPlot(oursins$gonades.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Résidus des masses des gonades",xlab = "Quantiles de la distribution normale")
+```
+
+- La distribution des résidus de la masses des gonades ne suit pas une distribution normale ( avec une intervale de confiance de 95%). Le premier critère d'application du test-t de student comparant deux groupes d'échantillons indépendants n'est pas respecté. 
+
+- Le nombre d'obeservations est élevé.
+
+-> Le tes-t de student indépendant peut être appliqué.
+\(\mu_{sauvage} = \mu_{élevage}\)
+
+\(H_{0}\) : \(\mu_{sauvage} = \mu_{élevage}\)
+\(H_{1}\) : \(\mu_{sauvage} \ne  \mu_{élevage}\) 
+
+```{r}
+t.test(gonades ~ origine, data = oursins,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+Le degré de confiance est fixé au seuil \(\alpha\) de 0.05
+Le seuil de probabilité critique ( p ) est égale à 0.0004767 
+p < 0.05 
+
+-> L'hypothèse H0 : est rejettée 
+
+#### Régression linéaire
+
+```{r}
+library("corrplot")
+corrplot::corrplot(cor(oursins[, 2:5],
+  use = "pairwise.complete.obs"),method = "num")
+
+```
+La matrice de correlation nous donne un coefficiant de corrélation de 0.86 entre la masse des gonades et la masse.
+```{r}
+library(dplyr)
+oursins %>% mutate ( log_gonades= log(gonades+1)) -> oursins
+#log (gonades+1) car log de 0 = infini -> probleme
+
+```
+
+```{r}
+summary(lm. <- lm(log_gonades ~ masse, data = oursins))
+lm. %>% (function (lm, model = lm[["model"]], vars = names(model))
+  ggplot(model, aes_string(x = vars[2], y = vars[1])) +
+  geom_point() + stat_smooth(method = "lm", formula = y ~ x))
+```
+82% des points suivent une distribution linéaire.
+Ce graphique nous suggère une relation linéaire croissante entre le logarithme de la masse des gonades et la masse des oursins. 
+
+
+```{r}
+#plot(lm., which = 1)
+lm. %>% qplot(.fitted, .resid, data = .) +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab("Residuals") +
+  ggtitle("Residuals vs Fitted")
+```
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les résidus semblent être dispersés au hasard autours de zéro.
+On peut tout de même observer une tendance locale ,pour les valeurs ajustées (fitted values) entre 0 et 0.7, à l'augmentation de la propagation des résidus à mesure que les valeurs ajustées.
+
+La variance des erreurs semble être constante (homoscédasticité). 
+
+```{r}
+#plot(lm., which = 2)
+lm. %>% qplot(sample = .stdresid, data = .) +
+  geom_abline(intercept = 0, slope = 1, colour = "darkgray") +
+  xlab("Theoretical quantiles") +
+  ylab("Standardized residuals") +
+  ggtitle("Normal Q-Q")
+```
+Ce graphique permet d'évaluer l'ajustement des résidus à la distribution normale.  
+
+l'ajustement des résidus à la distribution normale est pertinent. 
+
+```{r}
+#plot(lm., which = 3)
+lm. %>% qplot(.fitted, sqrt(abs(.stdresid)), data = .) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab(expression(bold(sqrt(abs("Standardized residuals"))))) +
+  ggtitle("Scale-Location")
+```
+
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les racines carrées des résidus semblent être réparties aléatoirement autours de 0. Nous observons tout de même une tendance locale( pour les valeurs ajustées allant de 0 à 0.5) à l'augmentation des racines carrés des résidus à mesure que les valeurs ajustées augmentent.
+
+#Discussion
+Le test-t de Student comparant deux groupes d’échantillons indépendants nous indique que la masse des gonades des *P.lividus*  d'élevage, avec comme valeur moyenne 1.825888 ± 3.037895 est plus grande que la masse des gonades des *P.lividus* sauvages,avec comme valeur moyenne 1.002437 ± 1.533132.
+Ne connaissant pas les paramètres d'élaboration des stades de maturité des *P.lividus*, nous avons préféré ne pas faire intervenir cette variable, mais il pourrait être intéressant de le faire.
+
+Bien qu'ayant un coefficiant de correlation de 0.86, un modèle de régression linéaire n'a pas pu être établi entre la masse des gonades des *P.lividus* et la masse des *P.lividus*. La masse des gonades ne comprenanant pas de valeurs négatives, une relation linéaire cohérente est obtenue entre le logarithme de la masse des gonades et la masse. Cette relation linéaire est pertinente mais comporte quelques défauts ( voir ). 
+
+#Conclusion
+
+En conclusion, la masse des gonades des *P.lividus* d'élevage est significativement plus élevée que la masse des gonades des *P.lividus* sauvages. 
+
+Il existe une relation linéaire pertinente entre le logarithme de la masse des gonades des *P.lividus* et la masse de ceux-ci. ( La masse des gonades  *P.lividus*  dépend de la masse de ceux-ci.)
+
+#Bibliographies
+
+Ph. Grosjean, Ch. Spirlet, M. jangoux. *Experimental study of growth in the echinoid Paracentrotus lividus (Lamarck, 1816) (Echinodermata).* Journal of Experimental Marine Biology and Ecology. Volume 201, Issues 1–2, 1 September 1996, Pages 173-184.
+
+http://doris.ffessm.fr/Especes/Paracentrotus-lividus-Oursin-violet-1437
+

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"biometrie_humaine\"\noutput: html_notebook\n---\n\n\n```{r}\nlibrary(readxl)\nbiometrie_3 <- read_excel(\"../data/biometrie_10.xlsx\", \n    skip = 26)\nView(biometrie_3)\n\nlibrary(readxl)\nbiometrie_4 <- read_excel(\"../data/biometrie_10.xlsx\", \n    skip = 26)\nView(biometrie_4)\n\n```\n\n```{r}\nlibrary(readxl)\nlibrary(\"dplyr\")\nall_data <- dir(\"../data\", full.names = TRUE)\n# Premier fichier\nbiom <- read_excel(all_data[1], skip = 25)\n# ConcatÃ¨ne tous les autres\nfor (f in all_data[-1]) {\n  #print(f)\n  biom <- bind_rows(biom, read_excel(f, skip = 25))\n}\n#View(biom)\n```\n```{r}\nlibrary(\"cowplot\")\nsexe_bar <- qplot(x = factor(sexe),\n  data = biom, geom = \"bar\") + coord_flip()\n## <other operations here...>\nplot(sexe_bar)\n```\n```{r}\n## Recoding biom$activite\nbiom$activite[biom$activite == \"sédentaire\"] <- \"sedentaire\"\nbiom$activite[biom$activite == \"active\"] <- \"actif\"\nbiom$activite <- factor(biom$activite)\n\n```\n\n```{r}\nactivite_bar <- qplot(x = factor(activite),\n  data = biom, geom = \"bar\") + coord_flip()\n## <other operations here...>\nplot(activite_bar)\n```\n\n```{r}\nhabitat_bar <- qplot(x = factor(habitat),\n  data = biom, geom = \"bar\") + coord_flip()\n## <other operations here...>\nplot(habitat_bar)\n```\n\n\n\n```{r}\n## Recoding biom$type_ant\nbiom$type_ant[biom$type_ant == \"caucasoïde\"] <- \"caucasoide\"\nbiom$type_ant[biom$type_ant == \"caucasien\"] <- \"caucasoide\"\nbiom$type_ant <- factor(biom$type_ant, levels = c (\"australoide\",\"mongoloide\",\"caucasoide\",\"negroide\"))\n\n```\n\n```{r}\ntype_ant_bar <- qplot(x = as.factor(type_ant),\n  data = biom, geom = \"bar\") + scale_x_discrete( drop = FALSE ) + coord_flip()\n## <other operations here...>\nplot(type_ant_bar)\n```\n```{r}\n## Recoding biom$type_alimentaire\nbiom$type_alimentaire[biom$type_alimentaire == \"omnivore\"] <- \"omni\"\nbiom$type_alimentaire[biom$type_alimentaire == \"vege\"] <- \"veget\"\nbiom$type_alimentaire[biom$type_alimentaire == \"omn\"] <- \"omni\"\nbiom$type_alimentaire <- factor(biom$type_alimentaire, levels = c (\"omni\",\"veget\",\"vegan\"))\n\ntype_alimentaire_bar <- qplot(x = as.factor(type_alimentaire),\n  data = biom, geom = \"bar\") + scale_x_discrete( drop = FALSE ) + coord_flip()\n## <other operations here...>\nplot(type_alimentaire_bar)\n```\n```{r}\nmasse_taille_bar <- qplot(x = taille, y = masse, color =sexe,\n  data = biom, geom = \"point\")\n## <other operations here...>\nplot(masse_taille_bar)\n```\n\n\n```{r}\ntour_taille_tour_hanche <- qplot(x = tour_hanche, y = tour_taille ,color = sexe,\n  data = biom, geom = \"point\")\n## <other operations here...>\nplot(tour_taille_tour_hanche)\n```\n\n```{r}\ntour_poignet_tour_bras <- qplot(x = tour_bras, y = tour_poignet, color = sexe,\n  data = biom, geom = \"point\")\n## <other operations here...>\nplot(tour_poignet_tour_bras)\n```\n\n```{r}\nlibrary(\"cowplot\")\np. <- qplot(x = alcool, y = tour_taille, color = sexe, shape = activite,\n  data = biom, geom = \"point\")\n## <other operations here...>\nplot(p.)\n```\n\n```{r}\nlibrary(\"cowplot\")\np. <- qplot(x = taille, data = biom,\n  geom = \"histogram\") # Add binwidth = x to force size of classes\n## <other operations here...>\nplot(p.)\n```\n\nOn étudie l'influence de lâge sur la masse\n\n```{r}\nlibrary(ggplot2)\n\nggplot(data = biom, mapping = aes(x = age, y = masse)) +\n  geom_point( mapping = aes(color = sexe))+\n  geom_smooth(method = \"lm\")\n  \n```\n\n\n\n\n\n\n\n\n\n\n\n",
+    "created" : 1508156594276.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "843121003",
+    "id" : "DD104EF1",
+    "lastKnownWriteTime" : 1508165927,
+    "last_content_update" : 1508165928059,
+    "path" : "~/Shared/Projects/biometrie_humaine/rapports/biometrie_lecohier_delgrange_begou.Rmd",
+    "project_path" : "rapports/biometrie_lecohier_delgrange_begou.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,6 @@
+"0","```r
+## Recoding biom$activite
+biom$activite[biom$activite == \"sédentaire\"] <- \"sedentaire\"
+biom$activite[biom$activite == \"active\"] <- \"actif\"
+biom$activite <- factor(biom$activite)
+```"

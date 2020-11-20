@@ -1,0 +1,45 @@
+---
+title: "Protéine_oeuf"
+output:
+  word_document: default
+  html_notebook: default
+---
+
+Absorption UV: 
+ 
+Œufs: 
+ 
+Nous avons commencé par recolter le blanc d'œuf. Nous l'avons dilué 10x, 100x, 500x, 1000x dans une solution de NaCl 0,9%. Nous avons ensuite mesuré, à l'aide d'un spectrophotomère, l'absorbance dans l'UV d'une de ces solutions. 
+
+Pour chaque longueur d'onde utilisée, il faut réaliser un "blanc" avec le solvant. Lors de cette étape, nous avons placé la solution de NaCl seule dans la partie du spectrophotomètre prévue à cet effet afin de calibrer l'appareil pour qu'il exclût l'absorbance de celui-ci dans la solution étudiée. 
+
+Nous avons choisi la solution diluéé 100x car son absorbance de départ, à une longueur d'onde de 250nm est de 0,269 (située en 0,2 et 0,5 à 250 nm comme indiqué dans le protocole). Nous avons tracé un graphique de nos résultats :
+
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+library(readr)
+dataset <- read_delim("absorbance.csv", ";", 
+    escape_double = FALSE, col_types = cols(absorbance = col_number(), 
+        longueur = col_number()), trim_ws = TRUE)
+View(dataset)
+
+ggplot(data = dataset,mapping=aes(x=longueur,y=absorbance)) +
+  geom_point()+
+  geom_smooth()+
+labs( x = "Longueur d'onde (nm) ", y = "Absorbance", caption = expression(paste("Graphique de l'absorbance d'une solution de blanc d'oeuf dilué en fonction de la longueur d'onde.")))
+
+
+
+```
+
+ On obtient un pic d'absorbance à 280 nm. Les protéines ont habituellement 2 pics d'absorbance : 
+ 
+ - Un premier à 220 nm qui correspond à l'absorption des liens peptidiques ( à cause du phénomène de délocalisation du lien peptidique )  mais l'oxygène absorbe aussi à cette longueur d'onde. La mise en évidence de ce premier pic n'a donc pas été testée expérimentalement : il faudrait effectuer cette expérience en atmosphère controlée. 
+ 
+- Un deuxième pic d'absorbance autours de 280 nm qui correspond à l'absorbance des acides aminés aromatiques ( Trp, Tyr, Phe). L'absorbance à 280nm d'une protéine dépend donc de sa proportion en acides aminés aromatiques
+
+L'expérience nous montre donc que nous sommes en présence de protéines. Elle nous donne aussi une information concernant la quantité d'acides aminés aromatiques présents dans les protéines du blanc d'oeuf utilisé. 

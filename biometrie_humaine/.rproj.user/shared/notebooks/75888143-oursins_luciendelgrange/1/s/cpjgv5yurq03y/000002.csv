@@ -1,0 +1,7 @@
+"0","```r
+```r
+mean(oursins$gonades, na.rm= TRUE)
+```
+```"
+"1","[1] 1.43761
+"

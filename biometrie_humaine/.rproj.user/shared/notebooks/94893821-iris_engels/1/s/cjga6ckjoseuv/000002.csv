@@ -1,0 +1,14 @@
+"0","```r
+library(tidyverse)
+library(cowplot)
+#?map_data()
+world <- map_data(\"world\")
+world$region <- as.factor(world$region)
+world$subregion <- as.factor(world$subregion)
+canada <- filter(world, region == \"Canada\")
+ggplot(data = canada) +
+  geom_polygon(mapping = aes(long, lat, group = group), fill= \"white\", color = \"black\")  +
+  geom_point(aes(y = 48.658056 , x = -65.752778 , color = \"#CD0000\"), size = 2, show.legend = FALSE)+theme(plot.caption = element_text(hjust = 0.5), axis.line = element_blank(), axis.title = element_blank(),axis.text = element_blank(), axis.ticks = element_blank()) +
+  coord_quickmap() +
+  labs( caption = \"Carte du Canada avec la mise en Ã©vidence \n du site de l'Ã©tude (GaspÃ©sie, QuÃ©bec, Canada)\")
+```"

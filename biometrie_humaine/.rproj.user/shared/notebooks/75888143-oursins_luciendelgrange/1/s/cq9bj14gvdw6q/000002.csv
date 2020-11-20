@@ -1,0 +1,8 @@
+"0","```r
+#plot(lm., which = 2)
+lm. %>% qplot(sample = .stdresid, data = .) +
+  geom_abline(intercept = 0, slope = 1, colour = \"darkgray\") +
+  xlab(\"Theoretical quantiles\") +
+  ylab(\"Standardized residuals\") +
+  ggtitle(\"Normal Q-Q\")
+```"

@@ -1,0 +1,5 @@
+"0","```r
+iris%>%group_by(Species)%>% summarise(\"mean\" = mean(log_pl), \"sd\" = sd(log_pl), \"number\" = length(log_pl)) -> a
+library(knitr)
+kable(x = a, format = \"pandoc\", caption = \"Tableau des logarithmes moyens des longueurs des pÃ©tales de trois espÃ¨ces d'*Iris* : _I. setosa_, _I. versicolor_, _I. verginica_\", col.names = c(\"Especes\", \"logarithme moyen des Longeurs\", \"Ecart-type\", \"Nombre d'observations\"), align = \"c\")
+```"

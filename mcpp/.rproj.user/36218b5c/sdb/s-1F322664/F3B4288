@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1507898793258.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "F3B4288",
+    "lastKnownWriteTime" : 67618288,
+    "last_content_update" : 1507898793258,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "FD6F95EF",
+        "caption" : "Coupefaim",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Coupefaim&cache_key=FD6F95EF",
+        "displayedObservations" : "18",
+        "environment" : "",
+        "object" : "Coupefaim",
+        "preview" : "0",
+        "totalObservations" : "18",
+        "variables" : "2"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

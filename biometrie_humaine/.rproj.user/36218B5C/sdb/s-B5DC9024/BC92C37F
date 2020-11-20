@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1509370037882.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BC92C37F",
+    "lastKnownWriteTime" : 38454528,
+    "last_content_update" : 1509370037882,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CC1730E7",
+        "caption" : "biom",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=biom&cache_key=CC1730E7",
+        "displayedObservations" : "140",
+        "environment" : "",
+        "object" : "biom",
+        "preview" : "0",
+        "totalObservations" : "140",
+        "variables" : "24"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

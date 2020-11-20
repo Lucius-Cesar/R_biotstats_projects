@@ -1,0 +1,4 @@
+"0","```r
+biom$age_categorie <- cut(biom$age, include.lowest=FALSE,  right=TRUE,
+                          breaks=c(0, 33, 65))
+```"

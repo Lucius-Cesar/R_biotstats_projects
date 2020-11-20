@@ -1,0 +1,6 @@
+"0","```r
+## Recoding biom$type_ant
+biom$type_ant[biom$type_ant == \"caucasoïde\"] <- \"caucasoide\"
+biom$type_ant[biom$type_ant == \"caucasien\"] <- \"caucasoide\"
+biom$type_ant <- factor(biom$type_ant, levels = c (\"australoide\",\"mongoloide\",\"caucasoide\",\"negroide\"))
+```"

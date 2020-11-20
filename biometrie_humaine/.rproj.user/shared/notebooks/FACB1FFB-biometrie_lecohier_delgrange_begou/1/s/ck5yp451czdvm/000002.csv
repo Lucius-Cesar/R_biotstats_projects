@@ -1,0 +1,5 @@
+"0","```r
+biom18 %>% mutate(log_masse.res= log10(masse.res)) -> biom18
+```"
+"1","NaNs produced
+"

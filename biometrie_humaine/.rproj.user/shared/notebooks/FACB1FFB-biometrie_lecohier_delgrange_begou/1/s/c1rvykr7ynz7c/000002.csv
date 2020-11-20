@@ -1,0 +1,13 @@
+"0","```r
+library(readxl)
+library(\"dplyr\")
+all_data <- dir(\"../data\", full.names = TRUE)
+# Premier fichier
+biom <- read_excel(all_data[1], skip = 25)
+# ConcatÃ¨ne tous les autres
+for (f in all_data[-1]) {
+  #print(f)
+  biom <- bind_rows(biom, read_excel(f, skip = 25))
+}
+#View(biom)
+```"

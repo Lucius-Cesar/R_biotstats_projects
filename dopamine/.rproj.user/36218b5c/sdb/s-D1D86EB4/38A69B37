@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"R Notebook\"\noutput: html_notebook\n---\n\n```{r}\nlibrary(readr)\nDopamine <- read_delim(\"data/Dopamine.csv\", \n    \"\\t\", escape_double = FALSE, trim_ws = TRUE)\nView(Dopamine)\n```\n\n```{r}\n## Recoding Dopamine$Treat\nDopamine$Treat <- factor(Dopamine$Treat)\n\n\n```\n\n```{r}\nsummary(Dopamine)\n```\n\n```{r}\nlibrary(ggplot2)\nggplot(data=Dopamine)+\n geom_boxplot(mapping=aes(x= Treat, y = Dopa, fill=Treat))\n```\n##statistiques\n\nH0: dopamine controle = dopamine toluène\nH1: dopamine controle $\\ne$ dopamine toluène\n                     ( veut dire \" différent\" )\n\nCalculer les résidus\n\n```{r}\nlibrary(\"dplyr\")\nDopamine %>% mutate(Dopa.res = Dopa - ave(Dopa, Treat)) -> Dopamine\n```\n\n#Test quantile quantile\n```{r}\ncar::qqPlot(Dopamine$Dopa.res, distribution = \"norm\",\n  envelope = 0.95, col = \"Black\", ylab = \"Dopa\")\n```\n\n-> les résidus suivent +- une distribution normale -> test de student\n\n```{r}\nt.test(Dopa ~ Treat, data = Dopamine,\n  alternative = \"two.sided\", conf.level = 0.95, var.equal = TRUE)\n```\n\n-> \n\navec test W\n```{r}\n#wilcox.test(Dopa ~ Treat, data = Dopamine,\n # alternative = \"two.sided\", conf.level = 0.95)\n```\n\n",
+    "created" : 1507894139407.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1857201077",
+    "id" : "38A69B37",
+    "lastKnownWriteTime" : 1507898639,
+    "last_content_update" : 1507898639571,
+    "path" : "/media/sf_Shared/Projects/dopamine/dopamine.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

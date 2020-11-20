@@ -1,0 +1,4 @@
+"0","```r
+oursins %>%filter(origine==\"Bretagne\", diametre>=15 ) -> oursins_Bretagne_d_15
+head(oursins_Bretagne_d_15, n=440)
+```"

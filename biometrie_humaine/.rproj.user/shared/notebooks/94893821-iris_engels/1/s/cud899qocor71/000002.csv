@@ -1,0 +1,9 @@
+"0","```r
+bartlett.test(Petal.Length  ~ Species, data = iris)
+```"
+"1","
+	Bartlett test of homogeneity of variances
+
+data:  Petal.Length by Species
+Bartlett's K-squared = 55.423, df = 2, p-value = 9.229e-13
+"

@@ -1,0 +1,69 @@
+---
+title: "plant_growth"
+output: html_notebook
+---
+
+```{r}
+data("PlantGrowth")
+```
+
+
+#description numérique
+
+```{r}
+library(dplyr)
+PlantGrowth %>% group_by(group)%>% summarise("poids moyen" = mean (weight), "écart-type" =sd (weight), "nombre d'observation" = length (weight)) ->a 
+summary(PlantGrowth)
+
+knitr::kable(a)
+```
+```{r}
+library(ggplot2)
+ggplot(data=PlantGrowth)+
+geom_boxplot(mapping=aes(x=group,y=weight, fill=group))
+```
+#Test hypothèse
+
+```{r}
+
+```
+
+H0 µctrl=µtrt1=µtrt2
+H1 : 1 moyenne est différente
+
+#test de distribution des résidus
+
+```{r}
+library(dplyr)
+PlantGrowth %>% mutate (weight.res = weight - ave (weight, group)) -> PlantGrowth
+```
+
+```{r}
+car::qqPlot(weight{2:<Xnum>}, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "<Xnum>")
+```
+
+```{r}
+anova(anova. <- lm(weight ~ group, data = PlantGrowth))
+```
+
+On teste alors les conditions de validité du test 
+
+```{r}
+library(dplyr)
+PlantGrowth %>% mutate (weight.res = weight - ave (weight, group)) -> PlantGrowth
+
+plot(anova., which=2)
+
+bartlett.test(weight ~ group, data = PlantGrowth)
+```
+
+
+test de comparaison multiple 
+
+```{r}
+summary(anovaComp. <- confint(multcomp::glht(anova.,
+  linfct = multcomp::mcp(group = "Tukey")))) # Add a second factor if you want
+.oma <- par(oma = c(0, 5.1, 0, 0)); plot(anovaComp.); par(.oma); rm(.oma
+```
+

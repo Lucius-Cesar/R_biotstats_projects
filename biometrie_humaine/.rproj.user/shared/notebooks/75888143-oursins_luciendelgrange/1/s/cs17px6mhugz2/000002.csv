@@ -1,0 +1,6 @@
+"0","```r
+  p. <- qplot(x =diametre, y = gonades, color=origine,
+  data = oursins, geom = \"point\")
+## <other operations here...>
+plot(p.)
+```"

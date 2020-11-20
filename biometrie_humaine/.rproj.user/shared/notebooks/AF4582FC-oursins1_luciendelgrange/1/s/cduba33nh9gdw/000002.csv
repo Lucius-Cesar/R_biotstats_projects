@@ -1,0 +1,8 @@
+"0","```r
+library(ggplot2)
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(maturite),y=gonades, fill=origine))+
+  theme_classic() +
+ labs( x = \"Origine\", y = \"Masse des gonades\", caption = expression(paste(\"Boxplot de comparaison de la masse des gonades des \", italic(\" P. lividus \"), \"en fonction du stade de maturité\")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```"

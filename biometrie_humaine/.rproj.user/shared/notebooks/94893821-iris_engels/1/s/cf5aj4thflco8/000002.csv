@@ -1,0 +1,24 @@
+"0","```r
+summary(anovaComp. <- confint(multcomp::glht(anova.,
+  linfct = multcomp::mcp(Species = \"Tukey\")))) # Add a second factor if you want
+```"
+"1","
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lm(formula = log_pl ~ Species, data = iris)
+
+Linear Hypotheses:
+                            Estimate Std. Error t value Pr(>|t|)    
+versicolor - setosa == 0     1.07017    0.02237   47.84   <2e-16 ***
+virginica - setosa == 0      1.33667    0.02237   59.75   <2e-16 ***
+virginica - versicolor == 0  0.26650    0.02237   11.91   <2e-16 ***
+---
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+(Adjusted p values reported -- single-step method)
+"
+"0","```r
+.oma <- par(oma = c(0, 5.1, 0, 0)); plot(anovaComp.); par(.oma); rm(.oma)
+```"

@@ -1,0 +1,16 @@
+"0","```r
+t.test(gonades ~ origine, data = oursins,
+  alternative = \"two.sided\", conf.level = 0.95, var.equal = TRUE)
+```"
+"1","
+	Two Sample t-test
+
+data:  gonades by origine
+t = -3.5201, df = 437, p-value = 0.0004767
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.2832189 -0.3636834
+sample estimates:
+mean in group Bretagne  mean in group Elevage 
+              1.002437               1.825888 
+"

@@ -1,0 +1,4 @@
+"0","```r
+car::qqPlot(biom18$log_masse.res, distribution = \"norm\",
+  envelope = 0.95, col = \"Black\", ylab = \"log_masse.res\")
+```"

@@ -1,0 +1,7 @@
+"0","```r
+library(dplyr)
+iris %>% mutate(log_pl_res = log_pl - ave(log_pl, Species)) -> iris
+library(car)
+qqPlot(iris$log_pl_res, distribution = \"norm\",
+            envelope = 0.95, col = \"Black\", ylab = \"RÃ©sidus des logarithmes des longueurs des pÃ©tales\", xlab = \"Quantiles de la distribution normale\")
+```"

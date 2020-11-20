@@ -1,0 +1,6 @@
+"0","```r
+tour_poignet_tour_bras <- qplot(x = tour_bras, y = tour_poignet, color = sexe,
+  data = biom, geom = \"point\")
+## <other operations here...>
+plot(tour_poignet_tour_bras)
+```"

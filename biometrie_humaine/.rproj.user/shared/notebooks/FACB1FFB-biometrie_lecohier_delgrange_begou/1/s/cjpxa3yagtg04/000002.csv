@@ -1,0 +1,7 @@
+"0","```r
+library(\"cowplot\")
+p. <- qplot(x = alcool, y = tour_taille, color = sexe, shape = activite,
+  data = biom, geom = \"point\")
+## <other operations here...>
+plot(p.)
+```"

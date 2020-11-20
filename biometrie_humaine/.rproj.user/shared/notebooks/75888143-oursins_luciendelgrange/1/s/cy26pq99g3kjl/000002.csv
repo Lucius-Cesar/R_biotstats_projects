@@ -1,0 +1,6 @@
+"0","```r
+library(readxl)
+oursins <- read_excel(\"../data/oursins.xlsx\", 
+    skip = 9)
+View(oursins)
+```"

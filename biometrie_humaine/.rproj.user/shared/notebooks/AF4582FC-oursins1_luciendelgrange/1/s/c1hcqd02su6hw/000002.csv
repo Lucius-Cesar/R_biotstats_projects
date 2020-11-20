@@ -1,0 +1,4 @@
+"0","```r
+library(dplyr)
+oursins %>% mutate(gonades.res = gonades - ave(gonades, origine)) -> oursins
+```"

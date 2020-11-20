@@ -1,0 +1,12 @@
+"0","```r
+anova(anova. <- lm(log_pl ~ Species, data = iris))
+```"
+"1","Analysis of Variance Table
+
+Response: log_pl
+           Df Sum Sq Mean Sq F value    Pr(>F)    
+Species     2 50.049 25.0247  1999.9 < 2.2e-16 ***
+Residuals 147  1.839  0.0125                      
+---
+Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+"

@@ -1,0 +1,9 @@
+"0","```r
+summary(oursins$gonades)
+```"
+"1","    Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+ 0.00000  0.02405  0.49620  1.43761  1.75385 16.39000        1 
+"
+"0","```r
+oursins %>% mutate(gonades.res = gonades - ave(gonades, origine)) -> oursins
+```"

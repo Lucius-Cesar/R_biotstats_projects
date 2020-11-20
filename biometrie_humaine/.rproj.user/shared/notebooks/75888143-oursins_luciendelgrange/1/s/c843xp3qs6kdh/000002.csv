@@ -1,0 +1,4 @@
+"0","```r
+corrplot::corrplot(cor(oursins[, 2:5],
+  use = \"pairwise.complete.obs\"), method = \"num\")
+```"

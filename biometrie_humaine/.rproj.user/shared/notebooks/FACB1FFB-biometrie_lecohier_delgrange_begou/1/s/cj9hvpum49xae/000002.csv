@@ -1,0 +1,6 @@
+"0","```r
+tour_taille_tour_hanche <- qplot(x = tour_hanche, y = tour_taille ,color = sexe,
+  data = biom, geom = \"point\")
+## <other operations here...>
+plot(tour_taille_tour_hanche)
+```"

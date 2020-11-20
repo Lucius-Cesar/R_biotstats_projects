@@ -1,0 +1,297 @@
+---
+title: "Biométrie des oursins violets"
+subtitle: "Différence entre la masse des gonades des *P.lividus* sauvages et en echiniculture"
+author:
+  - name: "Delgrange Lucien"
+    présentation: "Etudiant à l'université de Mons en BAC2 Biologie"
+date: "11 décembre 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+---
+
+#Introduction
+
+L'oursin violet : *Paracentrotus lividus* (Lamarck, 1816), est un oursin de la famille des 
+Parechinidae principalement représenté en mer Méditerrannée, en Océan Atlantique, en Manche et en mer du Nord. Il s'agit d'une espèce gonochorique dont les gonades sont consommées par l'homme. Organisme benthique et brouteur, il se nourrit principalement d'algues. Sa taille moyenne (test et piquants) est d'environ 8 cm.
+
+
+
+#But
+
+L'objet de cette analyse est de savoir si l'echiniculture des *Paracentrotus lividus* a une influence sur la masse de leurs gonades. 
+
+
+
+
+# Matériel et méthode
+
+
+## Acquisition des données 
+
+Les observations biométriques utilisées dans ce travail proviennent d'une étude expérimentale sur la croissance des *Paracentrotus lividus* de 1996 publiée dans " Journal of Experimental Marine Biology and Ecology " et réalisée par Ph. Grosjean, Ch. Spirlet et M. Jangoux. 
+
+Les oursins sauvages mesurés ainsi que la souche originelle des oursins d'élevage proviennent de la cote rocheuse de Morgat en Bretagne ( France ). 
+
+```{r}
+library(tidyverse)
+library(cowplot)
+#?map_data()
+world <- map_data("world")
+world$region <- as.factor(world$region)
+world$subregion <- as.factor(world$subregion)
+France <- filter(world, region == "France")
+
+ggplot(data = France) +
+  geom_polygon(mapping = aes(long, lat, group = group), fill= "white", color = "black")  +
+  geom_point(aes(y = 48.230110 , x = -4.511736 , color = "#CD0000"), size = 2, show.legend = FALSE)+theme(plot.caption = element_text(hjust = 0.5), axis.line = element_blank(), axis.title = element_blank(),axis.text = element_blank(), axis.ticks = element_blank()) +
+  coord_quickmap() +
+  labs( caption = "Carte de la france avec la mise en évidence de Morgat ( Bretagne ) ")
+```
+## Analyse des données
+
+1) Pour comparer la masse des gonades des oursins d'élevage et des oursins sauvages, Le test-t de Student comparant deux groupes d’échantillons indépendants est utilisé. 
+
+Les conditions de validités du test sont : 
+
+- Un échantillonnage aléatoire
+- Des observations indépendantes les unes des autres
+
+COLOR : Ces deux conditions sont supposées validées
+
+- Une distribution des résidus qui doit suivre une distribution normale ou approximativement normale : un graphique quantile-quantile de comparaison de la distribution des résidus avec une distribution normale permet d'observer si cette condition est respectée.
+
+Et/ou un grand nombre d'observations
+
+Cette dernière condition sera testée lors de l'analyse statistique 
+
+2) Un modèle de régression linéaire sera utilisé pour établir une relation linéaire entre 2 variables quantitatives. Le test ne traite pas ces 2 variables de manière égale : une des deux variables est dite dépendante de l'autre ( indépendante ).
+
+- on utilise comme critère de détermination de la droite : la minimisation de la somme des carrés des résidus 
+# Résultats 
+
+```{r}
+library(readxl)
+oursins <- read_excel("../data/oursins.xlsx", 
+    skip = 9)
+View(oursins)
+
+```
+
+## Masse des gonades 
+
+### Statistiques descriptives
+
+#### Statistiques descriptives numériques
+
+La moyenne des masses des gonades est différente pour les oursins sauvages ($1.00\pm1.53 g$) et pour les oursins d'élevage  ($1.83\pm3.04 g$). Les valeurs des écarts-types sont plus élevées que les valeurs des moyennes.
+
+```{r}
+library(dplyr)
+oursins%>%group_by(origine)%>% summarise("mean" = mean(gonades, na.rm=TRUE), "sd" = sd(gonades, na.rm=TRUE), "number" = length(gonades)) -> gon_or
+
+library(knitr)
+
+kable(x = gon_or, format = "html", caption = "Tableau des masses des gonades moyennes (en g) des oursins sauvages et d'elevage ", col.names = c("Origine", "Masse des gonades moyenne", "Ecart-type", "Nombre d'observations"), align = "c")
+
+```
+
+#### Statistiques descriptives graphiques
+
+La représentation graphique sous forme de boxplot permet de se représenter visuellement sur les 5 nombres : la valeur minimale, le premier quartile, la mediane, le troisième quartile et la valeur maximale. Ceux-ci semblent nous faire part d'une différence entre les masses des gonades des oursins sauvages et des oursins d'élevage (Boxplot de comparaison de la masse des gonades des *P.lividus* sauvages et d'élevage). Et cette différence semble s'accentuer en fonction de la maturité de l'oursin ( Boxplot de comparaison de la masse des gonades des *P.lividus* sauvages et d'élevage en fonction de leur stade de maturité).
+```{r}
+library("ggplot2")
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(origine),y=gonades, fill=origine))
+
+ labs( x = "Origine", y = "Masse des gonades", caption = expression(paste("Boxplot de comparaison de la masse des gonades des ", italic(" P. lividus "), ".")))+
+  theme(plot.caption = element_text(hjust = 0.5, size = 10))
+```
+
+```{r}
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(maturite),y=gonades, fill=origine))
+```
+```{r}
+library("ggplot2")
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(origine),y=gonades, fill=origine))
+```
+
+```{r}
+  p. <- qplot(x = masse, y = gonades, color=origine,
+  data = oursins, geom = "point")
+## <other operations here...>
+plot(p.)
+
+```
+
+```{r}
+  p. <- qplot(x =hauteur, y = gonades, color=origine,
+  data = oursins, geom = "point")
+## <other operations here...>
+plot(p.)
+```
+
+```{r}
+  p. <- qplot(x =diametre, y = gonades, color=origine,
+  data = oursins, geom = "point")
+## <other operations here...>
+plot(p.)
+```
+
+```{r}
+mean(oursins$gonades, na.rm= TRUE)
+```
+```{r}
+library(magrittr)
+library(dplyr)
+head (oursins, n= 440)
+oursins %>%filter(origine=="Bretagne" ) -> oursins_Bretagne
+head(oursins_Bretagne, n=440)
+
+head (oursins, n= 440)
+oursins %>%filter(origine=="Elevage" ) -> oursins_Elevage
+head(oursins_Elevage, n=440)
+```
+```{r}
+p. <- qplot(x = maturite, y =gonades, color=origine,
+  data = oursins, geom = "point")
+## <other operations here...>
+plot(p.)
+```
+
+```{r}
+mean(oursins_Bretagne$gonades)
+summary(oursins_Bretagne$gonades)
+var(oursins_Bretagne$gonades)
+sqrt (var(oursins_Bretagne$gonades))
+```
+
+```{r}
+mean(oursins_Elevage$gonades, na.rm=TRUE)
+summary(oursins_Elevage$gonades)
+var(oursins_Elevage$gonades, use = "complete.obs")
+sqrt (var(oursins_Elevage$gonades,use="complete.obs"))
+```
+
+
+```{r}
+ggplot(data=oursins) +
+  geom_boxplot(mapping=aes(x= as.factor(maturite),y=gonades, fill=origine))
+```
+
+```{r}
+library(magrittr)
+library(dplyr)
+head (oursins, n= 440)
+oursins %>%filter(origine=="Bretagne", diametre>=15 ) -> oursins_Bretagne_d_15
+head(oursins_Bretagne_d_15, n=440)
+
+
+```
+
+
+
+```{r}
+summary(oursins$gonades)
+oursins %>% mutate(gonades.res = gonades - ave(gonades, origine)) -> oursins
+```
+
+
+```{r}
+car::qqPlot(oursins$gonades.res, distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "gonades.res")
+```
+-> la masse des gonades ne suit pas une distribution normale
+
+
+##Statistiques
+
+H0 : gonades Elevage = gonades Bretagne
+H1 : gonades Elevage > gonades Bretagne
+
+```{r}
+t.test(gonades ~ origine, data = oursins,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+
+```{r}
+t.test(gonades ~ origine, data = oursins,
+  alternative = "greater", conf.level = 0.95, var.equal = TRUE)
+```
+
+-> On rejette l'hypothèse H0
+
+-> La moyenne de la masse des gonades d'élevage est supérieure à la moyenne de la masse des gonades à l'état sauvage en Bretagne.
+
+
+## test de corrélation
+
+```{r}
+corrplot::corrplot(cor(oursins[, 2:5],
+  use = "pairwise.complete.obs"), method = "num")
+```
+
+```{r}
+library(tidyverse)
+ggplot(data=oursins)+
+geom_point ( mapping=aes(x=masse, y=gonades))
+```
+```{r}
+library(dplyr)
+summary(oursins$gonades)
+oursins %>% mutate(log_gonades = log(gonades)) -> oursins
+```
+
+```{r}
+summary(lm. <- lm(log_gonades ~ masse, data = oursins))
+lm. %>% (function (lm, model = lm[["model"]], vars = names(model))
+  ggplot(model, aes_string(x = vars[2], y = vars[1])) +
+  geom_point() + stat_smooth(method = "lm", formula = y ~ x))
+```
+82% des points suivent une distrib lineaire
+
+```{r}
+library(dplyr)
+oursins %>% mutate ( log_gonades= log(gonades+1)) -> oursins
+#log (gonades+1) car log de 0 = infini -> probleme
+```
+
+
+
+```{r}
+#plot(lm., which = 1)
+lm. %>% qplot(.fitted, .resid, data = .) +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab("Residuals") +
+  ggtitle("Residuals vs Fitted")
+```
+
+```{r}
+#plot(lm., which = 2)
+lm. %>% qplot(sample = .stdresid, data = .) +
+  geom_abline(intercept = 0, slope = 1, colour = "darkgray") +
+  xlab("Theoretical quantiles") +
+  ylab("Standardized residuals") +
+  ggtitle("Normal Q-Q")
+```
+```{r}
+#plot(lm., which = 3)
+lm. %>% qplot(.fitted, sqrt(abs(.stdresid)), data = .) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab(expression(bold(sqrt(abs("Standardized residuals"))))) +
+  ggtitle("Scale-Location")
+```
+
+Pas si mal que ça 
+# Discussions
+
+# Conclusions

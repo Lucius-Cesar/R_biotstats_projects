@@ -1,0 +1,237 @@
+---
+title: "Cerisier noir"
+subtitle: ""
+author:
+  - name: "Delgrange Lucien"
+    affiliation: "Etudiant à l'université de Mons en BAC2 Biologie"
+date: "11 décembre 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+---
+#Introduction
+
+Le cerisier noir : *Prunus serotina*  Ehrh. est un arbre de la famille des Rosaceae originaire d'Amerique du Nord.Ayant été introduit en europe au XVII siècle, il est maintenant considéré comme invasif dans le continent. Il peut atteindre jusqu'à 35 m de hauteur mais on le retrouve aussi sous forme d'arbuste ou de petit arbre.
+
+![Photographie de *Prunus serotina*](image/cherries-592269_960_720.jpg)
+# But 
+
+Etablir un modèle de régression linéaire entre le volume des *P. serotina* et leur diamètre afin de prédire la production de bois
+# Matériels et méthodes
+
+## Acquisition des données
+
+Le jeu de donnée provient de * The Minitab Student Handbook. Duxbury Press" de Ryan, T. A., Joiner, B. L. and Ryan, B. F. (1976)*.
+
+# Matériels et méthodes
+
+## Analyse des données
+
+Un modèle de régression linéaire sera utilisé pour établir une relation linéaire entre 2 variables quantitatives. Le test ne traite pas ces 2 variables de manière égale : une des deux variables est dite dépendante de l'autre ( indépendante ).
+
+on utilise comme critère de détermination de la droite : la minimisation de la somme des carrés des résidus.
+
+- Nous testons l'homoscedasticité avec les graphiques suivants : 
+
+Le Graphique des résidus en fonction des valeurs ajustées.
+                                               
+Le Graphique de la racine carrée des résidus standardisés en fonction des valeurs ajustées.
+                                                      
+- Nous testons graphiquement la pertinence de la distribution des résidus standardisés avec la distribution normale.
+
+# Résultats
+## Statistiques descriptives 
+### Statistiques descriptives numériques
+
+```{r}
+data(trees)
+summary(trees)
+```
+```{r}
+library(knitr)
+kable(cerisiers,format = "pandoc", col.names = c("Diamètre(m)", "Hauteur(m)" , "volume (m^3)"))
+```
+
+```{r}
+library(dplyr)
+trees %>% mutate(Height= 0.3048*Height, Girth= 0.0254*Girth, Volume = 0.0283168*Volume) -> cerisiers
+```
+
+```{r}
+cerisiers %>% rename(diametre = Girth, hauteur = Height, volume= Volume) -> cerisiers
+```
+
+```{r}
+#Mise en évidence des corrélations
+
+corrplot::corrplot(cor(cerisiers[, 1:3],
+  use = "pairwise.complete.obs"), method = "ellipse")
+
+corrplot::corrplot(cor(cerisiers[, 1:3],
+  use = "pairwise.complete.obs"), method = "number", type="lower")
+```
+
+-> Correlation assez forte entre le volume est le diamètre (0.97). Le volume est la variable dépendante et le diamètre est la variable indépendante.
+
+On peut prédire le volume grace au diamètre
+
+```{r}
+library("dplyr")
+library("cowplot")
+ggplot(data=cerisiers)+
+geom_point (mapping = aes (x=diametre, y =volume))
+```
+Le nuage de points semble compatible avec une relation linéaire.
+
+###Regression linéaire
+
+```{r}
+summary(lm. <- lm(volume ~ diametre, data = cerisiers))
+lm. %>% (function(lm, model = lm[["model"]], vars = names(model))
+  ggplot(model, aes_string(x = vars[2], y = vars[1])) +
+  geom_point() + stat_smooth(method = "lm", formula = y ~ x))
+```
+
+Le seuil $\alpha$ est fixé à 0.05:
+A la ligne (Intercept), Pr = 7.62e-12
+1.02e-14< 0.05
+
+L'ordonnée à l'origine est siginificative au seuil $\alpha$ de 0.05
+
+Pr diamètre < 2e-16
+-> Il y a bien une correlation entre le diamètre et le v
+```{r}
+#plot(lm., which = 1)
+lm. %>% qplot(.fitted, .resid, data = .) +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab("Residuals") +
+  ggtitle("Residuals vs Fitted")
+```
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les résidus semblent ne semblent pas être dispersés aléatoirement autours de zéro.
+
+La variance des erreurs ne semble pas être constante sur ce graphique(hétéroscédasticité). Une transformation des données pourrait pallier au problème. 
+```{r}
+lm. %>% qplot(sample = .stdresid, data = .) +
+  geom_abline(intercept = 0, slope = 1, colour = "darkgray") +
+  xlab("Theoretical quantiles") +
+  ylab("Standardized residuals") +
+  ggtitle("Normal Q-Q")
+```
+Ce graphique permet d'évaluer l'ajustement des résidus  standardisés à la distribution normale.  
+
+l'ajustement des résidus standardisés à la distribution normale est pertinent. 
+
+```{r}
+lm. %>% qplot(.fitted, sqrt(abs(.stdresid)), data = .) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab(expression(bold(sqrt(abs("Standardized residuals"))))) +
+  ggtitle("Scale-Location")
+```
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les racines carrées des résidus standardisés semblent ne semblent pas être dispersés au hasard autours de zéro.
+
+La variance des erreurs ne semble pas être constante sur ce graphique(hétéroscédasticité). Une transformation des données pourrait pallier au problème. 
+
+#### Transformation des données 
+
+
+```{r}
+library(dplyr)
+cerisiers %>% mutate ( log_volume= log(volume)) -> cerisiers
+
+```
+```{r}
+library(dplyr)
+cerisiers %>% mutate ( log_diametre= log(diametre)) -> cerisiers
+```
+```{r}
+library("dplyr")
+library("cowplot")
+ggplot(data=cerisiers)+
+geom_point (mapping = aes (x=log_diametre, y =log_volume))
+
+```
+Le nuage de point semble compatible avec une régression linéaire
+
+```{r}
+library(dplyr)
+cerisiers %>% mutate ( log_volume= log(volume)) -> cerisiers
+
+```
+```{r}
+library(dplyr)
+cerisiers %>% mutate ( log_diametre= log(diametre)) -> cerisiers
+```
+
+
+```{r}
+summary(lm. <- lm(log_volume ~ log_diametre, data = cerisiers))
+lm. %>% (function(lm, model = lm[["model"]], vars = names(model))
+  ggplot(model, aes_string(x = vars[2], y = vars[1])) +
+  geom_point() + stat_smooth(method = "lm", formula = y ~ x))
+```
+
+Le seuil $\alpha$ est fixé à 0.05:
+A la ligne (Intercept), Pr = 7.62e-12
+1.02e-14< 0.05
+
+L'ordonnée à l'origine est siginificative au seuil $\alpha$ de 0.05
+
+Pr log_diamètre < 2e-16
+-> Il y a bien une correlation entre le diamètre et le v
+```{r}
+#plot(lm., which = 1)
+lm. %>% qplot(.fitted, .resid, data = .) +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab("Residuals") +
+  ggtitle("Residuals vs Fitted")
+```
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les résidus standardisés semblent être réparties aléatoirement autours de 0. Ce graphique semble nous faire part d'une homoscedasticité.
+```{r}
+lm. %>% qplot(sample = .stdresid, data = .) +
+  geom_abline(intercept = 0, slope = 1, colour = "darkgray") +
+  xlab("Theoretical quantiles") +
+  ylab("Standardized residuals") +
+  ggtitle("Normal Q-Q")
+```
+Ce graphique permet d'évaluer l'ajustement des résidus  standardisés à la distribution normale.  
+
+l'ajustement des résidus standardisés à la distribution normale est pertinent. 
+```{r}
+lm. %>% qplot(.fitted, sqrt(abs(.stdresid)), data = .) +
+  geom_smooth(se = FALSE) +
+  xlab("Fitted values") +
+  ylab(expression(bold(sqrt(abs("Standardized residuals"))))) +
+  ggtitle("Scale-Location")
+```
+Ce graphique est utilisé pour vérifier que la variance des erreurs de la variable dépendantes est constante. Cela permet de vérifier que la variance est indépendante de la valeur de la variable indépendante (condition d'homosceadasticité).
+
+Les racines carrées des résidus standardisés semblent être réparties aléatoirement autours de 0. Ce graphique semble nous faire part d'une homoscedasticité.
+
+#Discussion
+
+Une relation linéaire cohérente est obtenue entre le logarithme du volume et le logarithme du diamètre. Toutes les conditions sont respectées :  la distribution des résidus standardisés du logarithme du volume suit une distribution normale, les racinnes carrée des résidus standardisés sont à peu près répartis aléatoirement autours de 0  en fonction des valeurs ajustées. Les résidus sont également disposé aléatoirement en fonction des valeurs ajustées. Il y a homoscedasticité. 
+
+#Conclusion
+
+Il existe une relation linéaire entre le logarithme du volume de *P. cerotina* et son logarithme du diamètre. Il est possible de prédire la production de bois grâce au logarithme du diamètre.
+
+#Bibliographies
+
+- The Minitab Student Handbook. Duxbury Press" de Ryan, T. A., Joiner, B. L. and Ryan, B. F. (1976)*.
+- http://www.fcbn.fr/sites/fcbn.fr/files/ressource_telechargeable/fiche_prunus_serotina_sr.pdf
+

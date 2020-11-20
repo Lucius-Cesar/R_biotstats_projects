@@ -1,0 +1,6 @@
+"0","```r
+library(dplyr)
+oursins%>%group_by(origine)%>% summarise(\"mean\" = mean(gonades, na.rm=TRUE), \"sd\" = sd(gonades, na.rm=TRUE), \"number\" = length(gonades)) -> gon_or
+library(knitr)
+kable(x = gon_or, format = \"pandoc\", caption = \"Tableau de la masse des gonades moyenne (en g) des oursins sauvages et d'élevage \", col.names = c(\"Origine\", \"Masse des gonades moyenne\", \"Ecart-type\", \"Nombre d'observations\"), align = \"c\")
+```"

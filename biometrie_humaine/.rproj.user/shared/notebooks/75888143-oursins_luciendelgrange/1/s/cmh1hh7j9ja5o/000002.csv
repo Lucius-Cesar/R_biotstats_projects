@@ -1,0 +1,5 @@
+"0","```r
+library(dplyr)
+oursins %>% mutate ( log_gonades= log(gonades+1)) -> oursins
+#log (gonades+1) car log de 0 = infini -> probleme
+```"

@@ -1,0 +1,21 @@
+"0","```r
+mean(oursins_Bretagne$gonades)
+```"
+"1","[1] 1.002437
+"
+"0","```r
+summary(oursins_Bretagne$gonades)
+```"
+"1","   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.0099  0.3000  1.0024  1.5350  9.3944 
+"
+"0","```r
+var(oursins_Bretagne$gonades)
+```"
+"1","[1] 2.350495
+"
+"0","```r
+sqrt (var(oursins_Bretagne$gonades))
+```"
+"1","[1] 1.533132
+"

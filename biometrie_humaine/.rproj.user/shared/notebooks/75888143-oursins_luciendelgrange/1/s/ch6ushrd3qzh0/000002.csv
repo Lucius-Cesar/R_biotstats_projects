@@ -1,0 +1,4 @@
+"0","```r
+car::qqPlot(oursins$gonades.res, distribution = \"norm\",
+  envelope = 0.95, col = \"Black\", ylab = \"gonades.res\")
+```"

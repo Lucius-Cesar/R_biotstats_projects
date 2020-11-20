@@ -1,0 +1,9 @@
+"0","```r
+library(\"corrplot\")
+```"
+"1","corrplot 0.84 loaded
+"
+"0","```r
+corrplot::corrplot(cor(oursins[, 2:5],
+  use = \"pairwise.complete.obs\"),method = \"num\")
+```"

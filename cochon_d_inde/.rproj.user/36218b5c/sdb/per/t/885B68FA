@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"R Notebook\"\noutput: html_notebook\n---\n\nThis is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. \n\nTry executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. \n\n```{r}\n## Recoding ToothGrowth$dose\nToothGrowth$dose <- as.character(ToothGrowth$dose)\nToothGrowth$dose <- factor(ToothGrowth$dose)\n```\n```{r}\n## Recoding ToothGrowth$dose\nToothGrowth$dose <- as.character(ToothGrowth$dose)\nToothGrowth$dose <- factor(ToothGrowth$dose)\n\n```\n\n\n```{r}\nlibrary(\"ggplot2\")\nggplot(data=ToothGrowth) +\n  geom_boxplot(mapping=aes(x= as.factor(dose),y=len, fill=supp)) \n```\n\n\n\n# test d'hypothèse de student\n\nH_0: mouenne croissance QJ = moyenne croissance VC\nH_1 : moyenne croissance QJ = $\\ne$ moyenne croissance VC\n\n```{r}\ncar::qqPlot(ToothGrowth$len, distribution = \"norm\",\n  envelope = 0.95, col = \"Black\", ylab = \"<Xnum>\")\n```\n\n```{r}\nt.test(len ~ supp, data = ToothGrowth,\n  alternative = \"two.sided\", conf.level = 0.95, var.equal = TRUE)\n```\nOn a pas de diff significative entre les moyennes\n\n-> l'hypothèse est à garder , on a 5% de se tromper\n\n\nDifférence significative au niveau de la dose ? Anova test\n\non ne fait pas de sous ensemble car : Pas de différence significative entre VC et OJ ( le mettre dans le rapport)\n```{r}\n\nanova(anova. <- lm(len ~ dose, data = ToothGrowth))\n#on teste les résidus\n\nlibrary(dplyr)\nToothGrowth %>% mutate (len.res = len - ave (len, dose)) -> ToothGrowth\n\nplot(anova., which = 2)\n\nbartlett.test(len ~ dose, data = ToothGrowth) # POUR VÉRIFIER L'HOMOGÉNÉITÉ DE LA VARIANCE\n```\n\n-> BARLETT ok car bien au dessus de 0,05%\n\n```{r}\nsummary(anovaComp. <- confint(multcomp::glht(anova.,\n  linfct = multcomp::mcp(dose = \"Tukey\")))) # Add a second factor if you want\n.oma <- par(oma = c(0, 5.1, 0, 0)); plot(anovaComp.); par(.oma); rm(.oma)\n```\n\nil faut que ça passe par 0 pour qu'il n'y ai pas de différence entre les groupes\n\nIci -> Différence entre les 3 doses\n",
+    "created" : 1508762641666.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "809971036",
+    "id" : "885B68FA",
+    "lastKnownWriteTime" : 1508764741,
+    "last_content_update" : 1508764741590,
+    "path" : "~/Shared/Projects/cochon_d'inde/cohcon_d'inde.Rmd",
+    "project_path" : "cohcon_d'inde.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

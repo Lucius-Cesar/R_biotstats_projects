@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"R Notebook\"\noutput: html_notebook\n---\n\nThis is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. \n\nTry executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. \n\n```{r}\n## Recoding ToothGrowth$dose\nToothGrowth$dose <- as.character(ToothGrowth$dose)\nToothGrowth$dose <- factor(ToothGrowth$dose)\n```\n\n\n```{r}\nlibrary(\"ggplot2\")\nggplot(data=ToothGrowth) +\n  geom_boxplot(mapping=aes(x= as.factor(dose),y=len, fill=supp)) \n```\n\n```{r}\ndata (\"ToothGrowth\")\nhead (\"ToothGrowth\")\n```\n\n# test d'hypothèse de student\n\nH_0: mouenne croissance QJ = moyenne croissance VC\nH_1 : moyenne croissance QJ = $\\ne$ moyenne croissance VC\n\n```{r}\ncar::qqPlot(ToothGrowth$len, distribution = \"norm\",\n  envelope = 0.95, col = \"Black\", ylab = \"<Xnum>\")\n```\n\n```{r}\nt.test(len ~ supp, data = ToothGrowth,\n  alternative = \"two.sided\", conf.level = 0.95, var.equal = TRUE)\n```\n\n-> l'hypothèse est à garder , on a 5% de se tromper\n",
+    "created" : 1507042714344.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "825321194",
+    "id" : "8373C31",
+    "lastKnownWriteTime" : 1507732228,
+    "last_content_update" : 1507732228732,
+    "path" : "/media/sf_Shared/Projects/cochon_d'inde/cohcon_d'inde.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

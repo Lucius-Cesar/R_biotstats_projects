@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1506330014240.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "77053076",
+    "lastKnownWriteTime" : 80,
+    "last_content_update" : 1506330014240,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "E9087614",
+        "caption" : "biometrie_10",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=biometrie_10&cache_key=E9087614",
+        "displayedObservations" : "5",
+        "environment" : "",
+        "object" : "biometrie_10",
+        "preview" : "0",
+        "totalObservations" : "5",
+        "variables" : "21"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
